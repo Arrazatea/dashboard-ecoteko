@@ -107,8 +107,8 @@ with col2:
     st.metric(label=f"💰 Costo Total ({moneda})", value=f"${costo_total:,.0f}")
 
 with col3:
-    potencia_total = df_filtered["Potencia de paneles"].sum()
-    st.metric(label="⚡ Potencia Total Instalada", value=f"{potencia_total} kW")
+    potencia_total = df_filtered["Potencia del sistema"].sum()
+    st.metric(label="⚡ Potencia Total Instalada", value=f"{potencia_total} W")
 
 with col4:
     costo_promedio_watt = df_filtered["COSTO POR WATT"].mean() * factor_cambio
