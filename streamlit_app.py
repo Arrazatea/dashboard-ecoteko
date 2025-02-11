@@ -17,9 +17,13 @@ df.columns = df.columns.str.strip()
 TIPO_CAMBIO = 20.5
 
 # 🎨 **Configuración del Dashboard**
+# Agregar logo en la parte superior
+logo_url = "https://www.tuempresa.com/logo.png"  # 🖼️ Cambia esta URL al logo correcto
+st.image(logo_url, width=200)  # Ajusta el tamaño según necesites
 st.title("📊 Dashboard de Instalaciones Residenciales - Ecoteko")
 
 # 📌 **Sidebar con Filtros**
+st.sidebar.image(logo_url, width=150)  # También puedes agregar el logo en la barra lateral
 st.sidebar.title("⚙️ Filtros")
 
 # 💰 **Filtro para moneda**
@@ -148,6 +152,7 @@ with col2:
 st.subheader(f"⚡ Análisis de Outliers en Costo por Watt ({moneda})")
 st.plotly_chart(fig3)
 
-# 📋 **Mostrar Tabla de Datos Filtrados con Edición**
+# 📋 **Mostrar Tabla de Datos Filtrados**
 st.subheader("📄 Datos Filtrados")
 st.data_editor(df_filtered, height=400, use_container_width=True)
+
