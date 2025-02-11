@@ -2,10 +2,10 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 
-# 📂 Cargar el archivo CSV desde GitHub o localmente
+# 📂 Cargar el archivo CSV desde GitHub
 @st.cache_data
 def load_data():
-    url = "https://raw.githubusercontent.com/Arrazatea/dashboard-ecoteko/refs/heads/main/ResumenEnero25.csv"  # ⚠ Cambia esto si el archivo está en GitHub
+    url = "https://raw.githubusercontent.com/Arrazatea/dashboard-ecoteko/main/ResumenEnero25.csv"
     return pd.read_csv(url)
 
 df = load_data()
@@ -18,13 +18,14 @@ for col in columns_to_clean:
 # 🎨 Configuración del Dashboard
 st.title("📊 Dashboard de Instalaciones Fotovoltaicas - Ecoteko")
 
-# 📌 **Filtros interactivos**
-mes = st.selectbox("📅 Selecciona el Mes:", ["Todos"] + list(df["Mes"].unique()))
-cuadrilla = st.selectbox("👷‍♂️ Selecciona la Cuadrilla:", ["Todas"] + list(df["Cuadrilla"].unique()))
-potencia_panel = st.selectbox("🔋 Potencia de Panel:", ["Todas"] + list(df["Potencia de paneles"].unique()))
-tipo_instalacion = st.selectbox("🏗️ Tipo de Instalación:", ["Todas"] + list(df["Tipo de instalación"].unique()))
+# 📌 **Sidebar con Filtros**
+st.sidebar.title("⚙️ Filtros")
+mes = st.sidebar.selectbox("📅 Selecciona el Mes:", ["Todos"] + list(df["Mes"].unique()))
+cuadrilla = st.sidebar.selectbox("👷‍♂️ Selecciona la Cuadrilla:", ["Todas"] + list(df["Cuadrilla"].unique()))
+potencia_panel = st.sidebar.selectbox("🔋 Potencia de Panel:", ["Todas"] + list(df["Potencia de paneles"].unique()))
+tipo_instalacion = st.sidebar.selectbox("🏗️ Tipo de Instalación:", ["Todas"] + list(df["Tipo de instalación"].unique()))
 
-# 🔍 Aplicar filtros
+# 🔍 **Aplicar filtros**
 df_filtered = df.copy()
 if mes != "Todos":
     df_filtered = df_filtered[df_filtered["Mes"] == mes]
@@ -36,7 +37,6 @@ if tipo_instalacion != "Todas":
     df_filtered = df_filtered[df_filtered["Tipo de instalación"] == tipo_instalacion]
 
 # 📊 **Gráfico 1: Distribución de Costos**
-st.subheader("💰 Distribución de Costos en el Costo Total")
 cost_distribution = pd.DataFrame({
     "Categoría": ["Equipos", "Estructura", "Mano de Obra"],
     "Porcentaje": [
@@ -46,18 +46,28 @@ cost_distribution = pd.DataFrame({
     ]
 })
 fig1 = px.pie(cost_distribution, names="Categoría", values="Porcentaje", title="Distribución de Costos")
-st.plotly_chart(fig1)
 
 # 📊 **Gráfico 2: Costo total de estructura por panel**
-st.subheader("🏗️ Costo Total de Estructura por Panel")
 fig2 = px.bar(df_filtered, x="Nombre del proyecto", y="Costo total de estructura por panel", color="Tipo de instalación", title="Costo de Estructura por Panel")
-st.plotly_chart(fig2)
 
 # 📊 **Gráfico 3: Boxplot del Costo por Watt**
-st.subheader("⚡ Análisis de Outliers en Costo por Watt")
 fig3 = px.box(df_filtered, y="COSTO POR WATT", color="Tipo de instalación", title="Variabilidad del Costo por Watt")
+
+# 📌 **Organizar gráficos en columnas**
+col1, col2 = st.columns(2)
+
+with col1:
+    st.subheader("💰 Distribución de Costos")
+    st.plotly_chart(fig1)
+
+with col2:
+    st.subheader("🏗️ Costo Total de Estructura por Panel")
+    st.plotly_chart(fig2)
+
+# 📊 **Mostrar Boxplot en pantalla completa**
+st.subheader("⚡ Análisis de Outliers en Costo por Watt")
 st.plotly_chart(fig3)
 
-# 📋 **Mostrar Tabla de Datos Filtrados**
+# 📋 **Mostrar Tabla de Datos Filtrados con Edición**
 st.subheader("📄 Datos Filtrados")
-st.dataframe(df_filtered)
+st.data_editor(df_filtered, height=400, use_container_width=True)
