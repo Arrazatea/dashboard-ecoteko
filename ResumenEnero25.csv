@@ -1,0 +1,12 @@
+Empresa,Mes,Nombre del proyecto,Cuadrilla,No. de Paneles,Potencia de paneles,Potencia del sistema,Costo de equipos,Costo estructura,Costo mano de obra,Costo total,Costo de estructura vs. costo de modulos,Tipo de instalación,Costo por panel,Costo total de estructura por panel,COSTO POR WATT
+Ecoteko,Enero,Javier Medrano Rojas,Ruben,8,585,4680,19870.79,8072.2,13000,40942.99,0.41,Estructura PTR,5117.87375,1009.025,8.748502137
+Ecoteko,Enero,Rodolfo Fuentes,Contralec,18,615,11070,45809.83,21961.58,27000,94771.41,1.11,Unirac Ascender,5265.078333,1220.087778,8.561102981
+Ecoteko,Enero,Ramiro Morales ,Contralec,12,585,7020,25239.67,14177.68,18000,57417.35,0.71,Unirac Ascender,4784.779167,1181.473333,8.179109687
+Ecoteko,Enero,Alberto Plancarte,Jose,8,585,4680,12170.8,13111.95,20300,45582.75,0.66,Estructura PTR,5697.84375,1638.99375,9.739903846
+Ecoteko,Enero,Guadalupe Saldaña,Contralec,6,585,3510,9128.1,12768,9000,30896.1,0.64,Unirac Ascender,5149.35,2128,8.802307692
+Ecoteko,Enero,Cruz Ornelas García,Contralec,6,615,3690,10187.28,8613.39,9000,27800.67,0.43,Unirac Ascender,4633.445,1435.565,7.534056911
+Ecoteko,Enero,Tomas Olascoaga,Contralec,2,555,1110,3414.32,4594.53,3000,7594.53,0.23,Unirac Ascender,3797.265,2297.265,6.841918919
+Ecoteko,Enero,Jose Angel Jaramillo,Contralec,10,615,6150,27275.4,16731,15000,59006.4,0.84,Unirac Ascender,5900.64,1673.1,9.594536585
+Ecoteko,Enero,Victor Alejandro Herrera,Contralec,8,615,4920,20890.71,12154.95,12000,45045.66,0.61,Unirac Ascender,5630.7075,1519.36875,9.155621951
+Ecoteko,Febrero,Gertrudis Zarzoza,Contralec,8,615,4920,20890.71,13606.96,12000,46497.67,0.68,Unirac Ascender,5812.20875,1700.87,9.450745935
+Ecoteko,Febrero,Mauricio Garza Lozano,Contralec,10,615,6150,24286.47,14171.26,15000,53457.73,0.71,Unirac Ascender,5345.773,1417.126,8.692313821
