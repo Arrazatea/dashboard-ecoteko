@@ -17,7 +17,7 @@ df.columns = df.columns.str.strip()
 TIPO_CAMBIO = 20.5
 
 # 🎨 **Configuración del Dashboard**
-st.title("📊 Dashboard de Instalaciones Fotovoltaicas - Ecoteko")
+st.title("📊 Dashboard de Instalaciones Residenciales - Ecoteko")
 
 # 📌 **Sidebar con Filtros**
 st.sidebar.title("⚙️ Filtros")
