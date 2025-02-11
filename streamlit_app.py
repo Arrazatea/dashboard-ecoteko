@@ -10,7 +10,7 @@ def load_data():
 
 df = load_data()
 
-# 🛠 Limpiar nombres de columnas (elimina espacios en nombres de columnas)
+# 🛠 Limpiar nombres de columnas
 df.columns = df.columns.str.strip()
 
 # 💱 **Tipo de Cambio**
@@ -83,7 +83,7 @@ with col5:
     costo_promedio_watt = df_filtered["COSTO POR WATT"].mean() * factor_cambio
     st.metric(label=f"⚡ Costo Promedio por Watt ({moneda})", value=f"${costo_promedio_watt:,.2f}")
 
-# 📊 **Gráfico 1: Distribución de Costos con Valores en Pesos/Dólares**
+# 📊 **Gráfico 1: Distribución de Costos**
 cost_distribution = pd.DataFrame({
     "Categoría": ["Equipos", "Estructura", "Mano de Obra"],
     "Monto": [
@@ -113,21 +113,25 @@ fig2 = px.bar(
 )
 fig2.update_xaxes(tickangle=-45)
 
-# 📊 **Gráfico 3: Boxplot del Costo por Watt con Línea de Media**
+# 📊 **Gráfico 3: Boxplot del Costo por Watt con Línea de Media por Tipo de Instalación**
 fig3 = px.box(
     df_filtered, 
     y=df_filtered["COSTO POR WATT"] * factor_cambio, 
+    x="Tipo de instalación", 
     color="Tipo de instalación", 
     title=f"Variabilidad del Costo por Watt en {moneda}"
 )
 
-# Añadir línea de media en el boxplot
-fig3.add_hline(
-    y=df_filtered["COSTO POR WATT"].mean() * factor_cambio, 
-    line_dash="dot", 
-    annotation_text="Media",
-    annotation_position="top right"
-)
+# 📌 **Añadir línea de media específica para cada tipo de instalación**
+media_por_tipo = df_filtered.groupby("Tipo de instalación")["COSTO POR WATT"].mean() * factor_cambio
+
+for tipo, media in media_por_tipo.items():
+    fig3.add_hline(
+        y=media, 
+        line_dash="dot", 
+        annotation_text=f"Media {tipo}: {media:.2f}",
+        annotation_position="top right"
+    )
 
 # 📌 **Organizar gráficos en columnas**
 col1, col2 = st.columns(2)
