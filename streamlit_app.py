@@ -135,16 +135,17 @@ fig1 = px.pie(
     title=f"Distribución de Costos en {moneda}"
 )
 
-# 📊 **Gráfico 2: Scatter Plot - Costo Total vs. Potencia Instalada**
-fig2 = px.scatter(
-    df_filtered, 
-    x="Potencia de paneles", 
-    y=df_filtered["Costo total"] * factor_cambio, 
-    color="Tipo de instalación", 
-    size=df_filtered["Costo total"] * factor_cambio,
-    title=f"Relación Costo Total vs. Potencia Instalada ({moneda})",
-    labels={"x": "Potencia Instalada (kW)", "y": f"Costo Total ({moneda})"},
-    hover_data=["Nombre del proyecto"]
+# 📊 **Gráfico 2: Barras Apiladas - Costos por Tipo de Instalación**
+df_stack = df_filtered.groupby("Tipo de instalación")[["Costo de equipos", "Costo estructura", "Costo mano de obra"]].sum() * factor_cambio
+df_stack = df_stack.reset_index().melt(id_vars="Tipo de instalación", var_name="Categoría", value_name="Costo")
+
+fig2 = px.bar(
+    df_stack, 
+    x="Tipo de instalación", 
+    y="Costo", 
+    color="Categoría",
+    title=f"Distribución de Costos por Tipo de Instalación ({moneda})",
+    barmode="stack"
 )
 
 # 📌 **Mostrar gráficos**
@@ -155,7 +156,7 @@ with col1:
     st.plotly_chart(fig1)
 
 with col2:
-    st.subheader(f"📊 Relación Costo Total vs. Potencia Instalada ({moneda})")
+    st.subheader(f"📊 Costos por Tipo de Instalación ({moneda})")
     st.plotly_chart(fig2)
 
 # 📋 **Mostrar Tabla de Datos Filtrados**
