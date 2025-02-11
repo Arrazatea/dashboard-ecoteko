@@ -47,7 +47,7 @@ with col1:
 
 with col2:
     costo_total = df_filtered["Costo total"].sum()
-    st.metric(label="💰 Costo Total Instalaciones", value=f"${costo_total:,.0f}")  # 🔹 Ajuste para evitar truncado
+    st.metric(label="💰 Costo Total Instalaciones", value=f"${costo_total:,.0f}")
 
 with col3:
     costo_promedio_panel = df_filtered["Costo total de estructura por panel"].mean()
@@ -57,11 +57,7 @@ with col4:
     potencia_total = df_filtered["Potencia de paneles"].sum()
     st.metric(label="⚡ Potencia Total Instalada", value=f"{potencia_total} kW")
 
-# 📊 **Nuevo Indicador: Costo Promedio por Proyecto**
-costo_promedio_proyecto = costo_total / total_proyectos if total_proyectos > 0 else 0
-st.metric(label="📊 Costo Promedio por Proyecto", value=f"${costo_promedio_proyecto:,.0f}")
-
-# 📊 **Gráfico 1: Distribución de Costos**
+# 📊 **Gráfico 1: Distribución de Costos Mejorado**
 cost_distribution = pd.DataFrame({
     "Categoría": ["Equipos", "Estructura", "Mano de Obra"],
     "Porcentaje": [
@@ -70,10 +66,23 @@ cost_distribution = pd.DataFrame({
         df_filtered["Costo mano de obra"].sum()
     ]
 })
-fig1 = px.pie(cost_distribution, names="Categoría", values="Porcentaje", title="Distribución de Costos")
+fig1 = px.pie(
+    cost_distribution, 
+    names="Categoría", 
+    values="Porcentaje", 
+    title="Distribución de Costos",
+    color_discrete_sequence=["#4682B4", "#FF9999", "#66B3FF"]
+)
 
-# 📊 **Gráfico 2: Costo total de estructura por panel**
-fig2 = px.bar(df_filtered, x="Nombre del proyecto", y="Costo total de estructura por panel", color="Tipo de instalación", title="Costo de Estructura por Panel")
+# 📊 **Gráfico 2: Costo total de estructura por panel (Eje X mejorado)**
+fig2 = px.bar(
+    df_filtered, 
+    x="Nombre del proyecto", 
+    y="Costo total de estructura por panel", 
+    color="Tipo de instalación", 
+    title="Costo de Estructura por Panel"
+)
+fig2.update_xaxes(tickangle=-45)  # 🔹 Rotar etiquetas para mejor lectura
 
 # 📊 **Gráfico 3: Boxplot del Costo por Watt**
 fig3 = px.box(df_filtered, y="COSTO POR WATT", color="Tipo de instalación", title="Variabilidad del Costo por Watt")
