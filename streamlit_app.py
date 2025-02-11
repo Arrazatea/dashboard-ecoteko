@@ -10,21 +10,22 @@ def load_data():
 
 df = load_data()
 
-# 🛠 Convertir columnas numéricas
-columns_to_clean = ["Costo de equipos", "Costo estructura", "Costo mano de obra", "Costo total", "Costo total de estructura por panel", "COSTO POR WATT"]
-for col in columns_to_clean:
-    df[col] = df[col].replace('[\$,]', '', regex=True).astype(float)
+# 🛠 Limpiar nombres de columnas (elimina espacios en nombres de columnas)
+df.columns = df.columns.str.strip()
+
+# 📌 Mostrar columnas para verificar nombres correctos
+st.write("📌 Columnas del DataFrame:", df.columns.tolist())
 
 # 💱 **Tipo de Cambio**
 TIPO_CAMBIO = 20.5
 
-# 🎨 Configuración del Dashboard
+# 🎨 **Configuración del Dashboard**
 st.title("📊 Dashboard de Instalaciones Fotovoltaicas - Ecoteko")
 
 # 📌 **Sidebar con Filtros**
 st.sidebar.title("⚙️ Filtros")
 
-# 💰 Filtro para moneda
+# 💰 **Filtro para moneda**
 moneda = st.sidebar.radio("💱 Seleccionar Moneda:", ["Pesos", "Dólares"])
 
 # 📅 **Filtro de Mes (Múltiples Opciones)**
@@ -39,8 +40,12 @@ potencias_seleccionadas = st.sidebar.multiselect("🔋 Potencia de Panel:", ["To
 # 🏗️ **Filtro de Tipo de Instalación**
 instalaciones_seleccionadas = st.sidebar.multiselect("🏗️ Tipo de Instalación:", ["Todas"] + list(df["Tipo de instalación"].unique()), default=["Todas"])
 
-# 🏢 **Filtro de Cliente**
-clientes_seleccionados = st.sidebar.multiselect("🏢 Selecciona Cliente:", ["Todos"] + list(df["Cliente"].unique()), default=["Todos"])
+# 🏢 **Filtro de Cliente (solo si la columna "Cliente" existe)**
+if "Cliente" in df.columns:
+    clientes_seleccionados = st.sidebar.multiselect("🏢 Selecciona Cliente:", ["Todos"] + list(df["Cliente"].unique()), default=["Todos"])
+else:
+    clientes_seleccionados = ["Todos"]
+    st.sidebar.error("⚠️ La columna 'Cliente' no existe en el dataset. Verifica el archivo CSV.")
 
 # 🔍 **Aplicar filtros**
 df_filtered = df.copy()
