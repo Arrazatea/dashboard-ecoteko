@@ -13,9 +13,6 @@ df = load_data()
 # 🛠 Limpiar nombres de columnas (elimina espacios en nombres de columnas)
 df.columns = df.columns.str.strip()
 
-# 📌 Mostrar columnas para verificar nombres correctos
-st.write("📌 Columnas del DataFrame:", df.columns.tolist())
-
 # 💱 **Tipo de Cambio**
 TIPO_CAMBIO = 20.5
 
@@ -40,12 +37,8 @@ potencias_seleccionadas = st.sidebar.multiselect("🔋 Potencia de Panel:", ["To
 # 🏗️ **Filtro de Tipo de Instalación**
 instalaciones_seleccionadas = st.sidebar.multiselect("🏗️ Tipo de Instalación:", ["Todas"] + list(df["Tipo de instalación"].unique()), default=["Todas"])
 
-# 🏢 **Filtro de Cliente (solo si la columna "Cliente" existe)**
-if "Cliente" in df.columns:
-    clientes_seleccionados = st.sidebar.multiselect("🏢 Selecciona Cliente:", ["Todos"] + list(df["Cliente"].unique()), default=["Todos"])
-else:
-    clientes_seleccionados = ["Todos"]
-    st.sidebar.error("⚠️ La columna 'Cliente' no existe en el dataset. Verifica el archivo CSV.")
+# 🏢 **Filtro de Cliente (Nombre del Proyecto)**
+clientes_seleccionados = st.sidebar.multiselect("🏢 Selecciona Cliente:", ["Todos"] + list(df["Nombre del proyecto"].unique()), default=["Todos"])
 
 # 🔍 **Aplicar filtros**
 df_filtered = df.copy()
@@ -59,14 +52,14 @@ if "Todas" not in potencias_seleccionadas:
 if "Todas" not in instalaciones_seleccionadas:
     df_filtered = df_filtered[df_filtered["Tipo de instalación"].isin(instalaciones_seleccionadas)]
 if "Todos" not in clientes_seleccionados:
-    df_filtered = df_filtered[df_filtered["Cliente"].isin(clientes_seleccionados)]
+    df_filtered = df_filtered[df_filtered["Nombre del proyecto"].isin(clientes_seleccionados)]
 
 # 📌 **KPIs Principales (Aplicando Filtros y Moneda)**
 st.markdown("## 📊 Indicadores Clave")
 
 factor_cambio = 1 if moneda == "Pesos" else 1 / TIPO_CAMBIO
 
-col1, col2, col3, col4 = st.columns(4)
+col1, col2, col3, col4, col5 = st.columns(5)
 
 with col1:
     total_proyectos = df_filtered["Nombre del proyecto"].nunique()
@@ -83,6 +76,10 @@ with col3:
 with col4:
     potencia_total = df_filtered["Potencia de paneles"].sum()
     st.metric(label="⚡ Potencia Total Instalada", value=f"{potencia_total} kW")
+
+with col5:
+    costo_promedio_watt = df_filtered["COSTO POR WATT"].mean() * factor_cambio
+    st.metric(label=f"⚡ Costo Promedio por Watt ({moneda})", value=f"${costo_promedio_watt:,.2f}")
 
 # 📊 **Gráfico 1: Distribución de Costos con Valores en Pesos/Dólares**
 cost_distribution = pd.DataFrame({
