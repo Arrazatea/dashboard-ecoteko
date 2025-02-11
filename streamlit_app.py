@@ -47,15 +47,15 @@ st.markdown("""
         }
         .logo-container img {
             background-color: rgba(255, 255, 255, 0.1);
-            padding: 10px;
+            padding: 15px;
             border-radius: 15px;
         }
     </style>
 """, unsafe_allow_html=True)
 
-# 📌 **Agregar Logo Centrado**
+# 📌 **Agregar Logo Centrado con Mayor Tamaño**
 logo_url = "https://raw.githubusercontent.com/Arrazatea/dashboard-ecoteko/main/LOGO.png"
-st.markdown(f'<div class="logo-container"><img src="{logo_url}" width="250"></div>', unsafe_allow_html=True)
+st.markdown(f'<div class="logo-container"><img src="{logo_url}" width="400"></div>', unsafe_allow_html=True)
 
 # 📌 **Título del Dashboard**
 st.markdown("# ⚡ Dashboard de Instalaciones Fotovoltaicas - Ecoteko")
@@ -95,7 +95,7 @@ if "Todas" not in instalaciones_seleccionadas:
 if "Todos" not in clientes_seleccionados:
     df_filtered = df_filtered[df_filtered["Nombre del proyecto"].isin(clientes_seleccionados)]
 
-# 📌 **KPIs Principales**
+# 📌 **KPIs Principales (Aplicando Filtros y Moneda)**
 st.markdown("## 📊 Indicadores Clave")
 
 factor_cambio = 1 if moneda == "Pesos" else 1 / TIPO_CAMBIO
@@ -132,23 +132,20 @@ fig1 = px.pie(
     cost_distribution, 
     names="Categoría", 
     values="Monto", 
-    title=f"Distribución de Costos en {moneda}"
+    title=f"Distribución de Costos en {moneda}",
+    color_discrete_sequence=["#4682B4", "#FF9999", "#66B3FF"]
 )
 
-# 📊 **Gráfico 2: Barras Apiladas - Costos por Tipo de Instalación**
-df_stack = df_filtered.groupby("Tipo de instalación")[["Costo de equipos", "Costo estructura", "Costo mano de obra"]].sum() * factor_cambio
-df_stack = df_stack.reset_index().melt(id_vars="Tipo de instalación", var_name="Categoría", value_name="Costo")
-
+# 📊 **Gráfico 2: Costos por Tipo de Instalación**
 fig2 = px.bar(
-    df_stack, 
-    x="Tipo de instalación", 
-    y="Costo", 
-    color="Categoría",
-    title=f"Distribución de Costos por Tipo de Instalación ({moneda})",
-    barmode="stack"
+    df_filtered.melt(id_vars=["Tipo de instalación"], value_vars=["Costo de equipos", "Costo estructura", "Costo mano de obra"]),
+    x="Tipo de instalación",
+    y="value",
+    color="variable",
+    title=f"Distribución de Costos por Tipo de Instalación ({moneda})"
 )
 
-# 📊 **Gráfico 3: Boxplot del Costo por Watt**
+# 📊 **Boxplot del Costo por Watt con Media por Tipo de Instalación**
 fig3 = px.box(
     df_filtered, 
     y=df_filtered["COSTO POR WATT"] * factor_cambio, 
@@ -157,30 +154,20 @@ fig3 = px.box(
     title=f"Variabilidad del Costo por Watt ({moneda})"
 )
 
-# 📊 **Gráfico 4: Costo Total de Estructura por Panel**
-fig4 = px.bar(
-    df_filtered, 
-    x="Nombre del proyecto", 
-    y=df_filtered["Costo total de estructura por panel"] * factor_cambio, 
-    color="Tipo de instalación", 
-    title=f"Costo de Estructura por Panel en {moneda}"
-)
-
-# 📌 **Mostrar gráficos**
+# 📌 **Organizar gráficos en columnas**
 col1, col2 = st.columns(2)
 
 with col1:
     st.subheader(f"💰 Distribución de Costos ({moneda})")
     st.plotly_chart(fig1)
-    st.subheader(f"📊 Boxplot de Costo por Watt ({moneda})")
-    st.plotly_chart(fig3)
 
 with col2:
-    st.subheader(f"📊 Costos por Tipo de Instalación ({moneda})")
+    st.subheader(f"🏗️ Costos por Tipo de Instalación ({moneda})")
     st.plotly_chart(fig2)
-    st.subheader(f"🏗️ Costo Total de Estructura por Panel ({moneda})")
-    st.plotly_chart(fig4)
 
-# 📋 **Mostrar Tabla de Datos Filtrados**
+st.subheader(f"⚡ Análisis de Outliers en Costo por Watt ({moneda})")
+st.plotly_chart(fig3)
+
+# 📋 **Mostrar Tabla de Datos Filtrados con Edición**
 st.subheader("📄 Datos Filtrados")
 st.data_editor(df_filtered, height=400, use_container_width=True)
