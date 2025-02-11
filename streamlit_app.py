@@ -50,12 +50,6 @@ st.markdown("""
             padding: 10px;
             border-radius: 15px;
         }
-
-        /* Ajuste de métricas */
-        .metric-container {
-            font-size: 24px;
-            font-weight: bold;
-        }
     </style>
 """, unsafe_allow_html=True)
 
@@ -141,13 +135,16 @@ fig1 = px.pie(
     title=f"Distribución de Costos en {moneda}"
 )
 
-# 📊 **Gráfico 2: Histograma del Costo Total de Instalaciones**
-fig2 = px.histogram(
+# 📊 **Gráfico 2: Scatter Plot - Costo Total vs. Potencia Instalada**
+fig2 = px.scatter(
     df_filtered, 
-    x=df_filtered["Costo total"] * factor_cambio, 
-    nbins=10,
-    title=f"Distribución del Costo Total de Instalaciones en {moneda}",
-    labels={"x": f"Costo Total ({moneda})", "y": "Frecuencia"}
+    x="Potencia de paneles", 
+    y=df_filtered["Costo total"] * factor_cambio, 
+    color="Tipo de instalación", 
+    size=df_filtered["Costo total"] * factor_cambio,
+    title=f"Relación Costo Total vs. Potencia Instalada ({moneda})",
+    labels={"x": "Potencia Instalada (kW)", "y": f"Costo Total ({moneda})"},
+    hover_data=["Nombre del proyecto"]
 )
 
 # 📌 **Mostrar gráficos**
@@ -158,9 +155,10 @@ with col1:
     st.plotly_chart(fig1)
 
 with col2:
-    st.subheader(f"📊 Histograma de Costo Total de Instalaciones ({moneda})")
+    st.subheader(f"📊 Relación Costo Total vs. Potencia Instalada ({moneda})")
     st.plotly_chart(fig2)
 
 # 📋 **Mostrar Tabla de Datos Filtrados**
 st.subheader("📄 Datos Filtrados")
 st.data_editor(df_filtered, height=400, use_container_width=True)
+
