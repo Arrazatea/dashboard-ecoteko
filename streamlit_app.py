@@ -96,7 +96,7 @@ st.markdown("## 📊 Indicadores Clave")
 
 factor_cambio = 1 if moneda == "Pesos" else 1 / TIPO_CAMBIO
 
-col1, col2, col3, col4 = st.columns(4)
+col1, col2, col3 = st.columns(3)
 
 with col1:
     total_proyectos = df_filtered["Nombre del proyecto"].nunique()
@@ -110,9 +110,19 @@ with col3:
     potencia_total = df_filtered["Potencia del sistema"].sum()
     st.metric(label="⚡ Potencia Total Instalada", value=f"{potencia_total} W")
 
+col4, col5, col6 = st.columns(3)
+
 with col4:
     costo_promedio_watt = df_filtered["COSTO POR WATT"].mean() * factor_cambio
     st.metric(label=f"⚡ Costo Promedio por Watt ({moneda})", value=f"${costo_promedio_watt:,.2f}")
+
+with col5:
+    costo_promedio_proyecto = (df_filtered["Costo total"].sum() / total_proyectos) * factor_cambio
+    st.metric(label=f"💰 Costo Promedio por Proyecto ({moneda})", value=f"${costo_promedio_proyecto:,.0f}")
+
+with col6:
+    costo_promedio_panel = df_filtered["Costo total de estructura por panel"].mean() * factor_cambio
+    st.metric(label=f"🏗️ Costo Promedio por Panel ({moneda})", value=f"${costo_promedio_panel:,.2f}")
 
 # 📊 **Gráfico 1: Distribución de Costos**
 cost_distribution = pd.DataFrame({
@@ -131,7 +141,8 @@ fig1 = px.pie(
     title=f"Distribución de Costos en {moneda}",
     color_discrete_sequence=["#4682B4", "#FF9999", "#66B3FF"]
 )
-# 📊 **Gráfico 2: Costos por Tipo de Instalación (Agrupado para evitar líneas pequeñas)**
+
+# 📊 **Gráfico 2: Costos por Tipo de Instalación**
 df_grouped = df_filtered.groupby("Tipo de instalación")[["Costo de equipos", "Costo estructura", "Costo mano de obra"]].sum().reset_index()
 
 fig2 = px.bar(
