@@ -18,7 +18,7 @@ TIPO_CAMBIO = 20.5
 
 # 🎨 **Configuración del Dashboard**
 # Agregar logo en la parte superior
-logo_url = "https://www.tuempresa.com/logo.png"  # 🖼️ Cambia esta URL al logo correcto
+logo_url = "https://raw.githubusercontent.com/Arrazatea/dashboard-ecoteko/main/LOGO COMPLETO_2-01.png"  # 🖼️ Cambia esta URL al logo correcto
 st.image(logo_url, width=200)  # Ajusta el tamaño según necesites
 st.title("📊 Dashboard de Instalaciones Residenciales - Ecoteko")
 
