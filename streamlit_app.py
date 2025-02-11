@@ -17,13 +17,47 @@ df.columns = df.columns.str.strip()
 TIPO_CAMBIO = 20.5
 
 # 🎨 **Configuración del Dashboard**
-# Agregar logo en la parte superior
-logo_url = "https://raw.githubusercontent.com/Arrazatea/dashboard-ecoteko/main/LOGO.png"  # 🖼️ Cambia esta URL al logo correcto
-st.image(logo_url, width=200)  # Ajusta el tamaño según necesites
-st.title("📊 Dashboard de Instalaciones Residenciales - Ecoteko")
+st.set_page_config(page_title="Dashboard Ecoteko", layout="wide")
+
+# **Estilos CSS Personalizados para Modo Oscuro**
+st.markdown("""
+    <style>
+        /* Cambiar color de fondo */
+        body, .main {
+            background-color: #101820 !important;
+            color: #F2AA4C !important;
+        }
+
+        /* Cambiar color de la barra lateral */
+        .css-1d391kg, .stSidebar {
+            background-color: #1A1A1A !important;
+        }
+
+        /* Personalizar títulos */
+        h1, h2, h3, h4, h5, h6 {
+            color: #F2AA4C !important;
+            font-weight: bold;
+        }
+
+        /* Ajuste de la imagen del logo */
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .logo-container img {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 15px;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
+# 📌 **Agregar Logo Centrado**
+logo_url = "https://raw.githubusercontent.com/Arrazatea/dashboard-ecoteko/main/LOGO.png"  # 🔹 Cambia esto a la URL correcta
+st.markdown(f'<div class="logo-container"><img src="{logo_url}" width="250"></div>', unsafe_allow_html=True)
 
 # 📌 **Sidebar con Filtros**
-st.sidebar.image(logo_url, width=150)  # También puedes agregar el logo en la barra lateral
 st.sidebar.title("⚙️ Filtros")
 
 # 💰 **Filtro para moneda**
@@ -63,7 +97,7 @@ st.markdown("## 📊 Indicadores Clave")
 
 factor_cambio = 1 if moneda == "Pesos" else 1 / TIPO_CAMBIO
 
-col1, col2, col3 = st.columns(3)
+col1, col2, col3, col4 = st.columns(4)
 
 with col1:
     total_proyectos = df_filtered["Nombre del proyecto"].nunique()
@@ -77,13 +111,7 @@ with col3:
     potencia_total = df_filtered["Potencia de paneles"].sum()
     st.metric(label="⚡ Potencia Total Instalada", value=f"{potencia_total} kW")
 
-col4, col5 = st.columns(2)
-
 with col4:
-    costo_promedio_panel = df_filtered["Costo total de estructura por panel"].mean() * factor_cambio
-    st.metric(label=f"📉 Costo Promedio por Panel ({moneda})", value=f"${costo_promedio_panel:,.2f}")
-
-with col5:
     costo_promedio_watt = df_filtered["COSTO POR WATT"].mean() * factor_cambio
     st.metric(label=f"⚡ Costo Promedio por Watt ({moneda})", value=f"${costo_promedio_watt:,.2f}")
 
@@ -102,10 +130,8 @@ fig1 = px.pie(
     names="Categoría", 
     values="Monto", 
     title=f"Distribución de Costos en {moneda}",
-    color_discrete_sequence=["#4682B4", "#FF9999", "#66B3FF"],
-    hover_data={"Monto": ":,.2f"}  # 🔹 Mostrar monto en tooltip
+    color_discrete_sequence=["#4682B4", "#FF9999", "#66B3FF"]
 )
-fig1.update_traces(textinfo="percent+label", hovertemplate="Categoría=%{label}<br>Monto=%{value:,.2f}")
 
 # 📊 **Gráfico 2: Costo total de estructura por panel**
 fig2 = px.bar(
@@ -115,7 +141,6 @@ fig2 = px.bar(
     color="Tipo de instalación", 
     title=f"Costo de Estructura por Panel en {moneda}"
 )
-fig2.update_xaxes(tickangle=-45)
 
 # 📊 **Gráfico 3: Boxplot del Costo por Watt con Línea de Media por Tipo de Instalación**
 fig3 = px.box(
@@ -125,17 +150,6 @@ fig3 = px.box(
     color="Tipo de instalación", 
     title=f"Variabilidad del Costo por Watt en {moneda}"
 )
-
-# 📌 **Añadir línea de media específica para cada tipo de instalación**
-media_por_tipo = df_filtered.groupby("Tipo de instalación")["COSTO POR WATT"].mean() * factor_cambio
-
-for tipo, media in media_por_tipo.items():
-    fig3.add_hline(
-        y=media, 
-        line_dash="dot", 
-        annotation_text=f"Media {tipo}: {media:.2f}",
-        annotation_position="top right"
-    )
 
 # 📌 **Organizar gráficos en columnas**
 col1, col2 = st.columns(2)
@@ -148,11 +162,9 @@ with col2:
     st.subheader(f"🏗️ Costo Total de Estructura por Panel ({moneda})")
     st.plotly_chart(fig2)
 
-# 📊 **Mostrar Boxplot en pantalla completa**
 st.subheader(f"⚡ Análisis de Outliers en Costo por Watt ({moneda})")
 st.plotly_chart(fig3)
 
-# 📋 **Mostrar Tabla de Datos Filtrados**
+# 📋 **Mostrar Tabla de Datos Filtrados con Edición**
 st.subheader("📄 Datos Filtrados")
 st.data_editor(df_filtered, height=400, use_container_width=True)
-
