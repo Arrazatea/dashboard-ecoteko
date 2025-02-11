@@ -22,24 +22,20 @@ st.set_page_config(page_title="Dashboard Ecoteko", layout="wide")
 # **Estilos CSS Personalizados para Modo Oscuro**
 st.markdown("""
     <style>
-        /* Cambiar color de fondo */
         body, .main {
             background-color: #101820 !important;
             color: #F2AA4C !important;
         }
 
-        /* Cambiar color de la barra lateral */
         .css-1d391kg, .stSidebar {
             background-color: #1A1A1A !important;
         }
 
-        /* Personalizar títulos */
         h1, h2, h3, h4, h5, h6 {
             color: #F2AA4C !important;
             font-weight: bold;
         }
 
-        /* Ajuste de la imagen del logo */
         .logo-container {
             display: flex;
             justify-content: center;
@@ -95,7 +91,7 @@ if "Todas" not in instalaciones_seleccionadas:
 if "Todos" not in clientes_seleccionados:
     df_filtered = df_filtered[df_filtered["Nombre del proyecto"].isin(clientes_seleccionados)]
 
-# 📌 **KPIs Principales (Aplicando Filtros y Moneda)**
+# 📌 **KPIs Principales**
 st.markdown("## 📊 Indicadores Clave")
 
 factor_cambio = 1 if moneda == "Pesos" else 1 / TIPO_CAMBIO
@@ -145,8 +141,17 @@ fig2 = px.bar(
     title=f"Distribución de Costos por Tipo de Instalación ({moneda})"
 )
 
-# 📊 **Boxplot del Costo por Watt con Media por Tipo de Instalación**
-fig3 = px.box(
+# 📊 **Gráfico 3: Costo Total de Estructura por Panel**
+fig3 = px.bar(
+    df_filtered, 
+    x="Nombre del proyecto", 
+    y=df_filtered["Costo total de estructura por panel"] * factor_cambio, 
+    color="Tipo de instalación", 
+    title=f"Costo de Estructura por Panel ({moneda})"
+)
+
+# 📊 **Boxplot del Costo por Watt**
+fig4 = px.box(
     df_filtered, 
     y=df_filtered["COSTO POR WATT"] * factor_cambio, 
     x="Tipo de instalación", 
@@ -165,9 +170,8 @@ with col2:
     st.subheader(f"🏗️ Costos por Tipo de Instalación ({moneda})")
     st.plotly_chart(fig2)
 
-st.subheader(f"⚡ Análisis de Outliers en Costo por Watt ({moneda})")
+st.subheader(f"🏗️ Costo de Estructura por Panel ({moneda})")
 st.plotly_chart(fig3)
 
-# 📋 **Mostrar Tabla de Datos Filtrados con Edición**
-st.subheader("📄 Datos Filtrados")
-st.data_editor(df_filtered, height=400, use_container_width=True)
+st.subheader(f"⚡ Análisis de Outliers en Costo por Watt ({moneda})")
+st.plotly_chart(fig4)
