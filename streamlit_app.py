@@ -54,7 +54,7 @@ logo_url = "https://raw.githubusercontent.com/Arrazatea/dashboard-ecoteko/main/L
 st.markdown(f'<div class="logo-container"><img src="{logo_url}" width="400"></div>', unsafe_allow_html=True)
 
 # 📌 **Título del Dashboard**
-st.markdown("# ⚡ Dashboard de Instalaciones Fotovoltaicas - Ecoteko")
+st.markdown("# ⚡ Dashboard de Instalaciones Residenciales - Ecoteko")
 
 # 📌 **Sidebar con Filtros**
 st.sidebar.title("⚙️ Filtros")
