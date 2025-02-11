@@ -5,7 +5,7 @@ import plotly.express as px
 # 📂 Cargar el archivo CSV desde GitHub o localmente
 @st.cache_data
 def load_data():
-    url = "https://raw.githubusercontent.com/TU_USUARIO/TU_REPO/main/ResumenEnero25.csv"  # ⚠ Cambia esto si el archivo está en GitHub
+    url = "https://github.com/Arrazatea/dashboard-ecoteko/edit/main/streamlit_app.py#:~:text=README.md-,ResumenEnero25,-.csv"  # ⚠ Cambia esto si el archivo está en GitHub
     return pd.read_csv(url)
 
 df = load_data()
