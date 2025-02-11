@@ -59,7 +59,7 @@ st.markdown("## 📊 Indicadores Clave")
 
 factor_cambio = 1 if moneda == "Pesos" else 1 / TIPO_CAMBIO
 
-col1, col2, col3, col4, col5 = st.columns(5)
+col1, col2, col3 = st.columns(3)
 
 with col1:
     total_proyectos = df_filtered["Nombre del proyecto"].nunique()
@@ -70,12 +70,14 @@ with col2:
     st.metric(label=f"💰 Costo Total ({moneda})", value=f"${costo_total:,.0f}")
 
 with col3:
-    costo_promedio_panel = df_filtered["Costo total de estructura por panel"].mean() * factor_cambio
-    st.metric(label=f"📉 Costo Promedio por Panel ({moneda})", value=f"${costo_promedio_panel:,.2f}")
-
-with col4:
     potencia_total = df_filtered["Potencia de paneles"].sum()
     st.metric(label="⚡ Potencia Total Instalada", value=f"{potencia_total} kW")
+
+col4, col5 = st.columns(2)
+
+with col4:
+    costo_promedio_panel = df_filtered["Costo total de estructura por panel"].mean() * factor_cambio
+    st.metric(label=f"📉 Costo Promedio por Panel ({moneda})", value=f"${costo_promedio_panel:,.2f}")
 
 with col5:
     costo_promedio_watt = df_filtered["COSTO POR WATT"].mean() * factor_cambio
@@ -101,7 +103,7 @@ fig1 = px.pie(
 )
 fig1.update_traces(textinfo="percent+label", hovertemplate="Categoría=%{label}<br>Monto=%{value:,.2f}")
 
-# 📊 **Gráfico 2: Costo total de estructura por panel (Mejorado)**
+# 📊 **Gráfico 2: Costo total de estructura por panel**
 fig2 = px.bar(
     df_filtered, 
     x="Nombre del proyecto", 
@@ -111,12 +113,20 @@ fig2 = px.bar(
 )
 fig2.update_xaxes(tickangle=-45)
 
-# 📊 **Gráfico 3: Boxplot del Costo por Watt (Mejorado)**
+# 📊 **Gráfico 3: Boxplot del Costo por Watt con Línea de Media**
 fig3 = px.box(
     df_filtered, 
     y=df_filtered["COSTO POR WATT"] * factor_cambio, 
     color="Tipo de instalación", 
     title=f"Variabilidad del Costo por Watt en {moneda}"
+)
+
+# Añadir línea de media en el boxplot
+fig3.add_hline(
+    y=df_filtered["COSTO POR WATT"].mean() * factor_cambio, 
+    line_dash="dot", 
+    annotation_text="Media",
+    annotation_position="top right"
 )
 
 # 📌 **Organizar gráficos en columnas**
@@ -134,12 +144,6 @@ with col2:
 st.subheader(f"⚡ Análisis de Outliers en Costo por Watt ({moneda})")
 st.plotly_chart(fig3)
 
-# 📌 **Mapa de Ubicación de Proyectos (si hay coordenadas)**
-if "Latitud" in df_filtered.columns and "Longitud" in df_filtered.columns:
-    st.subheader("🗺️ Ubicación de Proyectos")
-    st.map(df_filtered[["Latitud", "Longitud"]])
-
 # 📋 **Mostrar Tabla de Datos Filtrados con Edición**
 st.subheader("📄 Datos Filtrados")
 st.data_editor(df_filtered, height=400, use_container_width=True)
-
