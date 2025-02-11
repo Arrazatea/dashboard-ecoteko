@@ -148,16 +148,37 @@ fig2 = px.bar(
     barmode="stack"
 )
 
+# 📊 **Gráfico 3: Histograma del Costo por Watt**
+fig3 = px.histogram(
+    df_filtered, 
+    x=df_filtered["COSTO POR WATT"] * factor_cambio, 
+    nbins=15, 
+    title=f"Distribución del Costo por Watt ({moneda})"
+)
+
+# 📊 **Gráfico 4: Costo Total de Estructura por Panel**
+fig4 = px.bar(
+    df_filtered, 
+    x="Nombre del proyecto", 
+    y=df_filtered["Costo total de estructura por panel"] * factor_cambio, 
+    color="Tipo de instalación", 
+    title=f"Costo de Estructura por Panel en {moneda}"
+)
+
 # 📌 **Mostrar gráficos**
 col1, col2 = st.columns(2)
 
 with col1:
     st.subheader(f"💰 Distribución de Costos ({moneda})")
     st.plotly_chart(fig1)
+    st.subheader(f"📊 Histograma de Costo por Watt ({moneda})")
+    st.plotly_chart(fig3)
 
 with col2:
     st.subheader(f"📊 Costos por Tipo de Instalación ({moneda})")
     st.plotly_chart(fig2)
+    st.subheader(f"🏗️ Costo Total de Estructura por Panel ({moneda})")
+    st.plotly_chart(fig4)
 
 # 📋 **Mostrar Tabla de Datos Filtrados**
 st.subheader("📄 Datos Filtrados")
