@@ -131,10 +131,11 @@ fig1 = px.pie(
     title=f"Distribución de Costos en {moneda}",
     color_discrete_sequence=["#4682B4", "#FF9999", "#66B3FF"]
 )
+# 📊 **Gráfico 2: Costos por Tipo de Instalación (Agrupado para evitar líneas pequeñas)**
+df_grouped = df_filtered.groupby("Tipo de instalación")[["Costo de equipos", "Costo estructura", "Costo mano de obra"]].sum().reset_index()
 
-# 📊 **Gráfico 2: Costos por Tipo de Instalación**
 fig2 = px.bar(
-    df_filtered.melt(id_vars=["Tipo de instalación"], value_vars=["Costo de equipos", "Costo estructura", "Costo mano de obra"]),
+    df_grouped.melt(id_vars=["Tipo de instalación"], value_vars=["Costo de equipos", "Costo estructura", "Costo mano de obra"]),
     x="Tipo de instalación",
     y="value",
     color="variable",
