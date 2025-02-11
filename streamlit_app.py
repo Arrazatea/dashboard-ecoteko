@@ -1,151 +1,63 @@
 import streamlit as st
 import pandas as pd
-import math
-from pathlib import Path
+import plotly.express as px
 
-# Set the title and favicon that appear in the Browser's tab bar.
-st.set_page_config(
-    page_title='GDP dashboard',
-    page_icon=':earth_americas:', # This is an emoji shortcode. Could be a URL too.
-)
-
-# -----------------------------------------------------------------------------
-# Declare some useful functions.
-
+# 📂 Cargar el archivo CSV desde GitHub o localmente
 @st.cache_data
-def get_gdp_data():
-    """Grab GDP data from a CSV file.
+def load_data():
+    url = "https://raw.githubusercontent.com/TU_USUARIO/TU_REPO/main/ResumenEnero25.csv"  # ⚠ Cambia esto si el archivo está en GitHub
+    return pd.read_csv(url)
 
-    This uses caching to avoid having to read the file every time. If we were
-    reading from an HTTP endpoint instead of a file, it's a good idea to set
-    a maximum age to the cache with the TTL argument: @st.cache_data(ttl='1d')
-    """
+df = load_data()
 
-    # Instead of a CSV on disk, you could read from an HTTP endpoint here too.
-    DATA_FILENAME = Path(__file__).parent/'data/gdp_data.csv'
-    raw_gdp_df = pd.read_csv(DATA_FILENAME)
+# 🛠 Convertir columnas numéricas
+columns_to_clean = ["Costo de equipos", "Costo estructura", "Costo mano de obra", "Costo total", "Costo total de estructura por panel", "COSTO POR WATT"]
+for col in columns_to_clean:
+    df[col] = df[col].replace('[\$,]', '', regex=True).astype(float)
 
-    MIN_YEAR = 1960
-    MAX_YEAR = 2022
+# 🎨 Configuración del Dashboard
+st.title("📊 Dashboard de Instalaciones Fotovoltaicas - Ecoteko")
 
-    # The data above has columns like:
-    # - Country Name
-    # - Country Code
-    # - [Stuff I don't care about]
-    # - GDP for 1960
-    # - GDP for 1961
-    # - GDP for 1962
-    # - ...
-    # - GDP for 2022
-    #
-    # ...but I want this instead:
-    # - Country Name
-    # - Country Code
-    # - Year
-    # - GDP
-    #
-    # So let's pivot all those year-columns into two: Year and GDP
-    gdp_df = raw_gdp_df.melt(
-        ['Country Code'],
-        [str(x) for x in range(MIN_YEAR, MAX_YEAR + 1)],
-        'Year',
-        'GDP',
-    )
+# 📌 **Filtros interactivos**
+mes = st.selectbox("📅 Selecciona el Mes:", ["Todos"] + list(df["Mes"].unique()))
+cuadrilla = st.selectbox("👷‍♂️ Selecciona la Cuadrilla:", ["Todas"] + list(df["Cuadrilla"].unique()))
+potencia_panel = st.selectbox("🔋 Potencia de Panel:", ["Todas"] + list(df["Potencia de paneles"].unique()))
+tipo_instalacion = st.selectbox("🏗️ Tipo de Instalación:", ["Todas"] + list(df["Tipo de instalación"].unique()))
 
-    # Convert years from string to integers
-    gdp_df['Year'] = pd.to_numeric(gdp_df['Year'])
+# 🔍 Aplicar filtros
+df_filtered = df.copy()
+if mes != "Todos":
+    df_filtered = df_filtered[df_filtered["Mes"] == mes]
+if cuadrilla != "Todas":
+    df_filtered = df_filtered[df_filtered["Cuadrilla"] == cuadrilla]
+if potencia_panel != "Todas":
+    df_filtered = df_filtered[df_filtered["Potencia de paneles"] == potencia_panel]
+if tipo_instalacion != "Todas":
+    df_filtered = df_filtered[df_filtered["Tipo de instalación"] == tipo_instalacion]
 
-    return gdp_df
+# 📊 **Gráfico 1: Distribución de Costos**
+st.subheader("💰 Distribución de Costos en el Costo Total")
+cost_distribution = pd.DataFrame({
+    "Categoría": ["Equipos", "Estructura", "Mano de Obra"],
+    "Porcentaje": [
+        df_filtered["Costo de equipos"].sum(),
+        df_filtered["Costo estructura"].sum(),
+        df_filtered["Costo mano de obra"].sum()
+    ]
+})
+fig1 = px.pie(cost_distribution, names="Categoría", values="Porcentaje", title="Distribución de Costos")
+st.plotly_chart(fig1)
 
-gdp_df = get_gdp_data()
+# 📊 **Gráfico 2: Costo total de estructura por panel**
+st.subheader("🏗️ Costo Total de Estructura por Panel")
+fig2 = px.bar(df_filtered, x="Nombre del proyecto", y="Costo total de estructura por panel", color="Tipo de instalación", title="Costo de Estructura por Panel")
+st.plotly_chart(fig2)
 
-# -----------------------------------------------------------------------------
-# Draw the actual page
+# 📊 **Gráfico 3: Boxplot del Costo por Watt**
+st.subheader("⚡ Análisis de Outliers en Costo por Watt")
+fig3 = px.box(df_filtered, y="COSTO POR WATT", color="Tipo de instalación", title="Variabilidad del Costo por Watt")
+st.plotly_chart(fig3)
 
-# Set the title that appears at the top of the page.
-'''
-# :earth_americas: GDP dashboard
-
-Browse GDP data from the [World Bank Open Data](https://data.worldbank.org/) website. As you'll
-notice, the data only goes to 2022 right now, and datapoints for certain years are often missing.
-But it's otherwise a great (and did I mention _free_?) source of data.
-'''
-
-# Add some spacing
-''
-''
-
-min_value = gdp_df['Year'].min()
-max_value = gdp_df['Year'].max()
-
-from_year, to_year = st.slider(
-    'Which years are you interested in?',
-    min_value=min_value,
-    max_value=max_value,
-    value=[min_value, max_value])
-
-countries = gdp_df['Country Code'].unique()
-
-if not len(countries):
-    st.warning("Select at least one country")
-
-selected_countries = st.multiselect(
-    'Which countries would you like to view?',
-    countries,
-    ['DEU', 'FRA', 'GBR', 'BRA', 'MEX', 'JPN'])
-
-''
-''
-''
-
-# Filter the data
-filtered_gdp_df = gdp_df[
-    (gdp_df['Country Code'].isin(selected_countries))
-    & (gdp_df['Year'] <= to_year)
-    & (from_year <= gdp_df['Year'])
-]
-
-st.header('GDP over time', divider='gray')
-
-''
-
-st.line_chart(
-    filtered_gdp_df,
-    x='Year',
-    y='GDP',
-    color='Country Code',
-)
-
-''
-''
-
-
-first_year = gdp_df[gdp_df['Year'] == from_year]
-last_year = gdp_df[gdp_df['Year'] == to_year]
-
-st.header(f'GDP in {to_year}', divider='gray')
-
-''
-
-cols = st.columns(4)
-
-for i, country in enumerate(selected_countries):
-    col = cols[i % len(cols)]
-
-    with col:
-        first_gdp = first_year[first_year['Country Code'] == country]['GDP'].iat[0] / 1000000000
-        last_gdp = last_year[last_year['Country Code'] == country]['GDP'].iat[0] / 1000000000
-
-        if math.isnan(first_gdp):
-            growth = 'n/a'
-            delta_color = 'off'
-        else:
-            growth = f'{last_gdp / first_gdp:,.2f}x'
-            delta_color = 'normal'
-
-        st.metric(
-            label=f'{country} GDP',
-            value=f'{last_gdp:,.0f}B',
-            delta=growth,
-            delta_color=delta_color
-        )
+# 📋 **Mostrar Tabla de Datos Filtrados**
+st.subheader("📄 Datos Filtrados")
+st.dataframe(df_filtered)
