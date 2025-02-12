@@ -118,7 +118,7 @@ with col4:
 
 with col5:
     paneles_instalados = (df_filtered["No. de Paneles"].sum()) * factor_cambio
-    st.metric(label=f"⚡ Número de paneles , value=f"{paneles_instalados:,.0f}")
+    st.metric(label=f"⚡ Número de paneles" , value=f"{paneles_instalados:,.0f}")
 
 with col6:
     costo_promedio_panel = df_filtered["Costo total de estructura por panel"].mean() * factor_cambio
