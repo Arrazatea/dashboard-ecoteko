@@ -117,8 +117,8 @@ with col4:
     st.metric(label=f"⚡ Costo Promedio por Watt ({moneda})", value=f"${costo_promedio_watt:,.2f}")
 
 with col5:
-    costo_promedio_proyecto = (df_filtered["Costo total"].sum() / total_proyectos) * factor_cambio
-    st.metric(label=f"💰 Costo Promedio por Proyecto ({moneda})", value=f"${costo_promedio_proyecto:,.0f}")
+    paneles_instalados = (df_filtered["No. de Paneles"].sum()) * factor_cambio
+    st.metric(label=f"⚡ Número de paneles ({moneda})", value=f"{paneles_instalados:,.0f}")
 
 with col6:
     costo_promedio_panel = df_filtered["Costo total de estructura por panel"].mean() * factor_cambio
