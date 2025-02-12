@@ -172,7 +172,7 @@ fig4 = px.bar(
 )
 
 # 📊 **Boxplot del Costo por Watt**
-fig4 = px.box(
+fig5 = px.box(
     df_filtered, 
     y=df_filtered["COSTO POR WATT"] * factor_cambio, 
     x="Tipo de instalación", 
@@ -198,4 +198,4 @@ st.subheader(f"🏗️ Costo por Watt ({moneda})")
 st.plotly_chart(fig4)
 
 st.subheader(f"⚡ Análisis de Outliers en Costo por Watt ({moneda})")
-st.plotly_chart(fig4)
+st.plotly_chart(fig5)
