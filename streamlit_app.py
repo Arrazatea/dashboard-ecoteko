@@ -163,7 +163,7 @@ fig3 = px.bar(
 )
 
 # 📊 **Gráfico 4: Costo por Watt de cada Instlación**
-fig3 = px.bar(
+fig4 = px.bar(
     df_filtered, 
     x="Nombre del proyecto", 
     y=df_filtered["COSTO POR WATT"] * factor_cambio, 
