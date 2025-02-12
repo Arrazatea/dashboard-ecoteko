@@ -162,6 +162,15 @@ fig3 = px.bar(
     title=f"Costo de Estructura por Panel ({moneda})"
 )
 
+# 📊 **Gráfico 4: Costo por Watt de cada Instlación**
+fig3 = px.bar(
+    df_filtered, 
+    x="Nombre del proyecto", 
+    y=df_filtered["COSTO POR WATT"] * factor_cambio, 
+    color="Tipo de instalación", 
+    title=f"Costo por Watt ({moneda})"
+)
+
 # 📊 **Boxplot del Costo por Watt**
 fig4 = px.box(
     df_filtered, 
