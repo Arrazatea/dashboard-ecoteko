@@ -194,5 +194,8 @@ with col2:
 st.subheader(f"🏗️ Costo de Estructura por Panel ({moneda})")
 st.plotly_chart(fig3)
 
+st.subheader(f"🏗️ Costo por Watt ({moneda})")
+st.plotly_chart(fig4)
+
 st.subheader(f"⚡ Análisis de Outliers en Costo por Watt ({moneda})")
 st.plotly_chart(fig4)
