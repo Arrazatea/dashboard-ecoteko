@@ -117,7 +117,7 @@ with col4:
     st.metric(label=f"⚡ Costo Promedio por Watt ({moneda})", value=f"${costo_promedio_watt:,.2f}")
 
 with col5:
-    paneles_instalados = (df_filtered["No. de Paneles"].sum()) * factor_cambio
+    paneles_instalados = (df_filtered["No. de Paneles"].sum())
     st.metric(label=f"⚡ Número de paneles" , value=f"{paneles_instalados:,.0f}")
 
 with col6:
