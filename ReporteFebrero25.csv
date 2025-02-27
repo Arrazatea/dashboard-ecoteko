@@ -1,0 +1,21 @@
+Empresa,Mes,Nombre del proyecto,Cuadrilla,No. de Paneles,Potencia de paneles,Potencia del sistema,Costo de equipos,Costo estructura,Costo mano de obra,Costo total,Costo de estructura vs. costo de modulos,Tipo de instalaci—n,Costo por panel,Costo total de estructura por panel,COSTO POR WATT
+Ecoteko,Enero,Javier Medrano Rojas,Ruben,8,585,4680,23050.09,7846.94,16000,46897.03,0.34,Estructura PTR,5862.12875,980.8675,10.02073291
+Ecoteko,Enero,Rodolfo Fuentes,Contralec,18,615,11070,45809.83,21411.27,27000,94221.1,0.47,Unirac Ascender,5234.505556,1189.515,8.511391147
+Ecoteko,Enero,Ramiro Morales ,Contralec,12,585,7020,29227.95,13817.67,18000,61045.62,0.47,Unirac Ascender,5087.135,1151.4725,8.695957265
+Ecoteko,Enero,Alberto Plancarte,Jose,8,585,4680,14118.08,12048.5,20300,46466.58,0.85,Estructura PTR,5808.3225,1506.0625,9.92875641
+Ecoteko,Enero,Guadalupe Salda–a,Contralec,6,585,3510,19065.46,12768,9000,40833.46,0.67,Unirac Ascender,6805.576667,2128,11.63346439
+Ecoteko,Enero,Cruz Ornelas Garc’a,Contralec,6,615,3690,20294.14,8389.11,9000,37683.25,0.41,Unirac Ascender,6280.541667,1398.185,10.21226287
+Ecoteko,Enero,Tomas Olascoaga,Contralec,2,555,1110,3690.62,4482.5,3000,11173.12,1.21,Unirac Ascender,5586.56,2241.25,10.06587387
+Ecoteko,Enero,Jose Angel Jaramillo,Contralec,10,615,6150,31639.46,13656.55,15000,60296.01,0.43,Unirac Ascender,6029.601,1365.655,9.804229268
+Ecoteko,Febrero,Victor Alejandro Herrera,Contralec,8,615,4920,24233.22,10897.74,12000,47130.96,0.45,Unirac Ascender,5891.37,1362.2175,9.579463415
+Ecoteko,Febrero,Gertrudis Zarzoza,Contralec,8,615,4920,24233.22,12048.91,12000,48282.13,0.50,Unirac Ascender,6035.26625,1506.11375,9.813441057
+Ecoteko,Febrero,Mauricio Garza Lozano,Contralec,10,615,6150,28172.3,13070.72,15000,56243.02,0.46,Unirac Ascender,5624.302,1307.072,9.145206504
+Ecoteko,Febrero,Hector Madrigal,Contralec,8,615,4920,24798.1,10575.7,12000,47373.8,0.43,Unirac Ascender,5921.725,1321.9625,9.628821138
+Ecoteko,Febrero,Jose Ignacio Ortega,Contralec,10,615,6150,29937.09,13140.71,15000,58077.8,0.44,Unirac Ascender,5807.78,1314.071,9.443544715
+Ecoteko,Febrero,Mauricio Elizondo,Jose,30,615,18450,80553.86,43847.31,36000,160401.17,0.54,Unirac Ascender,5346.705667,1461.577,8.693830352
+Ecoteko,Febrero,Roberto Sanchez Valladares,Contralec,14,585,8190,35924.87,23265.65,22500,81690.52,0.65,Unirac Ascender,5835.037143,1661.832143,9.974422466
+Ecoteko,Febrero,Carlos Fernando Rodriguez,Contralec,8,615,4920,12477.51,9690.61,12000,34168.12,0.78,Unirac Ascender,4271.015,1211.32625,6.944739837
+Ecoteko,Febrero,Bernardo Bremer,Jose,40,580,23200,182361.62,52290.48,89935.27,324587.37,0.29,Estructura PTR,8114.68425,1307.262,13.99083491
+Ecoteko,Febrero,Gloria Alicia Tamez,Contralec,10,615,6150,23038.04,13904.44,15000,51942.48,0.60,Unirac Ascender,5194.248,1390.444,8.445931707
+Ecoteko,Febrero,Homero Villarreal,Contralec,10,615,6150,25791.5,13956.41,15000,54747.91,0.54,Unirac Ascender,5474.791,1395.641,8.902099187
+,,,,,,,,,,,,,,,
