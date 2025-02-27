@@ -6,7 +6,7 @@ import plotly.express as px
 @st.cache_data
 def load_data():
     url = "https://raw.githubusercontent.com/Arrazatea/dashboard-ecoteko/main/ReporteFebrero25.csv"
-    return pd.read_csv(url)
+    return pd.read_csv(url, encoding="latin1")
 
 df = load_data()
 
