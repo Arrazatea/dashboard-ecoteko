@@ -1,10 +1,10 @@
-Empresa,Mes,Nombre del proyecto,Cuadrilla,No. de Paneles,Potencia de paneles,Potencia del sistema,Costo de equipos,Costo estructura,Costo mano de obra,Costo total,Costo de estructura vs. costo de modulos,Tipo de instalación,Costo por panel,Costo total de estructura por panel,COSTO POR WATT
+ÔªøEmpresa,Mes,Nombre del proyecto,Cuadrilla,No. de Paneles,Potencia de paneles,Potencia del sistema,Costo de equipos,Costo estructura,Costo mano de obra,Costo total,Costo de estructura vs. costo de modulos,Tipo de instalaci√≥n,Costo por panel,Costo total de estructura por panel,COSTO POR WATT
 Ecoteko,Enero,Javier Medrano Rojas,Ruben,8,585,4680,23050.09,7846.94,16000,46897.03,0.34,Estructura PTR,5862.12875,980.8675,10.02073291
 Ecoteko,Enero,Rodolfo Fuentes,Contralec,18,615,11070,45809.83,21411.27,27000,94221.1,0.47,Unirac Ascender,5234.505556,1189.515,8.511391147
 Ecoteko,Enero,Ramiro Morales ,Contralec,12,585,7020,29227.95,13817.67,18000,61045.62,0.47,Unirac Ascender,5087.135,1151.4725,8.695957265
 Ecoteko,Enero,Alberto Plancarte,Jose,8,585,4680,14118.08,12048.5,20300,46466.58,0.85,Estructura PTR,5808.3225,1506.0625,9.92875641
-Ecoteko,Enero,Guadalupe Saldaña,Contralec,6,585,3510,19065.46,12768,9000,40833.46,0.67,Unirac Ascender,6805.576667,2128,11.63346439
-Ecoteko,Enero,Cruz Ornelas García,Contralec,6,615,3690,20294.14,8389.11,9000,37683.25,0.41,Unirac Ascender,6280.541667,1398.185,10.21226287
+Ecoteko,Enero,Guadalupe Salda√±a,Contralec,6,585,3510,19065.46,12768,9000,40833.46,0.67,Unirac Ascender,6805.576667,2128,11.63346439
+Ecoteko,Enero,Cruz Ornelas Garc√≠a,Contralec,6,615,3690,20294.14,8389.11,9000,37683.25,0.41,Unirac Ascender,6280.541667,1398.185,10.21226287
 Ecoteko,Enero,Tomas Olascoaga,Contralec,2,555,1110,3690.62,4482.5,3000,11173.12,1.21,Unirac Ascender,5586.56,2241.25,10.06587387
 Ecoteko,Enero,Jose Angel Jaramillo,Contralec,10,615,6150,31639.46,13656.55,15000,60296.01,0.43,Unirac Ascender,6029.601,1365.655,9.804229268
 Ecoteko,Febrero,Victor Alejandro Herrera,Contralec,8,615,4920,24233.22,10897.74,12000,47130.96,0.45,Unirac Ascender,5891.37,1362.2175,9.579463415
