@@ -1,4 +1,4 @@
-﻿Empresa,Mes,Nombre del proyecto,Cuadrilla,No. de Paneles,Potencia de paneles,Potencia del sistema,Costo de equipos,Costo estructura,Costo mano de obra,Costo total,Costo de estructura vs. costo de modulos,Tipo de instalación,Costo por panel,Costo total de estructura por panel,COSTO POR WATT
+﻿Empresa,Mes,Nombre del proyecto,Cuadrilla,No. de Paneles,Potencia de paneles,Potencia del sistema,Costo de equipos,Costo estructura,Costo mano de obra,Costo total,Costo de estructura vs. costo de modulos,Tipo de instalacion,Costo por panel,Costo total de estructura por panel,COSTO POR WATT
 Ecoteko,Enero,Javier Medrano Rojas,Ruben,8,585,4680,23050.09,7846.94,16000,46897.03,0.34,Estructura PTR,5862.12875,980.8675,10.02073291
 Ecoteko,Enero,Rodolfo Fuentes,Contralec,18,615,11070,45809.83,21411.27,27000,94221.1,0.47,Unirac Ascender,5234.505556,1189.515,8.511391147
 Ecoteko,Enero,Ramiro Morales ,Contralec,12,585,7020,29227.95,13817.67,18000,61045.62,0.47,Unirac Ascender,5087.135,1151.4725,8.695957265
