@@ -2,11 +2,19 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 
+# 📌 Configuración del Dashboard (DEBE SER LO PRIMERO)
+st.set_page_config(page_title="Dashboard Ecoteko", layout="wide")
+
 # 📂 Cargar el archivo CSV desde GitHub
 @st.cache_data
 def load_data():
     url = "https://raw.githubusercontent.com/Arrazatea/dashboard-ecoteko/refs/heads/main/ReporteFebrero25.csv"
-    return pd.read_csv(url, encoding="latin1")
+    df = pd.read_csv(url, encoding="latin1")
+    
+    # Corregir posibles errores en los nombres de columnas
+    df.columns = df.columns.str.replace("ï»¿", "").str.strip()
+
+    return df
 
 df = load_data()
 
