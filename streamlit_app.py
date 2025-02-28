@@ -143,10 +143,10 @@ fig1 = px.pie(
 )
 
 # 📊 **Gráfico 2: Costos por Tipo de Instalación**
-df_grouped = df_filtered.groupby("Tipo de instalación")[["Costo de equipos", "Costo estructura", "Costo mano de obra"]].sum().reset_index()
+df_grouped = df_filtered.groupby("Tipo de instalaciÃ³n")[["Costo de equipos", "Costo estructura", "Costo mano de obra"]].sum().reset_index()
 
 fig2 = px.bar(
-    df_grouped.melt(id_vars=["Tipo de instalación"], value_vars=["Costo de equipos", "Costo estructura", "Costo mano de obra"]),
+    df_grouped.melt(id_vars=["Tipo de instalaciÃ³n"], value_vars=["Costo de equipos", "Costo estructura", "Costo mano de obra"]),
     x="Tipo de instalación",
     y="value",
     color="variable",
