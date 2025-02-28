@@ -72,7 +72,7 @@ cuadrillas_seleccionadas = st.sidebar.multiselect("👷‍♂️ Selecciona las 
 potencias_seleccionadas = st.sidebar.multiselect("🔋 Potencia de Panel:", ["Todas"] + list(df["Potencia de paneles"].unique()), default=["Todas"])
 
 # 🏗️ **Filtro de Tipo de Instalación**
-instalaciones_seleccionadas = st.sidebar.multiselect("🏗️ Tipo de Instalacion:", ["Todas"] + list(df["Tipo de instalaciÃ³n"].unique()), default=["Todas"])
+instalaciones_seleccionadas = st.sidebar.multiselect("🏗️ Tipo de Instalación:", ["Todas"] + list(df["Tipo de instalaciÃ³n"].unique()), default=["Todas"])
 
 # 🏢 **Filtro de Cliente (Nombre del Proyecto)**
 clientes_seleccionados = st.sidebar.multiselect("🏢 Selecciona Cliente:", ["Todos"] + list(df["Nombre del proyecto"].unique()), default=["Todos"])
