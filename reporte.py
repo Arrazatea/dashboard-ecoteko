@@ -23,7 +23,7 @@ df.columns = df.columns.str.strip()
 TIPO_CAMBIO = 20.5
 
 # 🎨 **Configuración del Dashboard**
-st.set_page_config(page_title="Dashboard Residencial Ecoteko", layout="wide")
+#st.set_page_config(page_title="Dashboard Residencial Ecoteko", layout="wide")
 
 # **Estilos CSS Personalizados para Modo Oscuro**
 st.markdown("""
