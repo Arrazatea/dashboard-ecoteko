@@ -153,10 +153,10 @@ df_grouped = df_filtered.groupby("Tipo de instalacion")[["Costo de equipos", "Co
 
 fig2 = px.bar(
     df_grouped.melt(id_vars=["Tipo de instalacion"], value_vars=["Costo de equipos", "Costo estructura", "Costo mano de obra"]),
-    x="Tipo de instalación",
+    x="Tipo de instalacion",
     y="value",
     color="variable",
-    title=f"Distribución de Costos por Tipo de Instalacion ({moneda})"
+    title=f"Distribución de Costos por Tipo de Instalación ({moneda})"
 )
 
 # 📊 **Gráfico 3: Costo Total de Estructura por Panel**
