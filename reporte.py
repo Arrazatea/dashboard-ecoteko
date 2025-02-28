@@ -214,14 +214,5 @@ with col2:
 st.subheader(f"🏗️ Costo de Estructura por Panel ({moneda})")
 st.plotly_chart(fig3)
 
-if not df_filtered.empty:
-    fig4 = px.bar(
-        df_filtered,
-        x="Nombre del proyecto",
-        y=df_filtered["COSTO POR WATT"] * factor_cambio,
-        color="Tipo de instalacion",
-        title=f"Costo por Watt ({moneda})"
-    )
-    st.plotly_chart(fig4, use_container_width=True)  # Asegúrate de cambiar aquí
-else:
-    st.warning("No hay datos disponibles para mostrar en el gráfico de Costo por Watt.")
+st.subheader(f"🏗️ Costo por Watt ({moneda})")
+st.plotly_chart(fig4)  # ❌ Esta línea debe eliminarse
