@@ -168,14 +168,21 @@ fig3 = px.bar(
     title=f"Costo de Estructura por Panel ({moneda})"
 )
 
-# 📊 **Gráfico 4: Costo por Watt de cada Instlación**
-fig4 = px.bar(
-    df_filtered, 
-    x="Nombre del proyecto", 
-    y=df_filtered["COSTO POR WATT"] * factor_cambio, 
-    color="Tipo de instalación", 
-    title=f"Costo por Watt ({moneda})"
-)
+# Eliminar filas con valores nulos en "Nombre del proyecto" o "COSTO POR WATT"
+df_filtered = df_filtered.dropna(subset=["Nombre del proyecto", "COSTO POR WATT"])
+
+# Generar el gráfico solo si hay datos válidos
+if not df_filtered.empty:
+    fig4 = px.bar(
+        df_filtered,
+        x="Nombre del proyecto",
+        y=df_filtered["COSTO POR WATT"] * factor_cambio,
+        color="Tipo de instalacion",  # Asegúrate de que aquí también usas "Tipo de instalacion" sin tilde
+        title=f"Costo por Watt ({moneda})"
+    )
+    st.plotly_chart(fig4)
+else:
+    st.warning("No hay datos disponibles para mostrar en el gráfico de Costo por Watt.")
 
 # 📊 **Boxplot del Costo por Watt**
 fig5 = px.box(
