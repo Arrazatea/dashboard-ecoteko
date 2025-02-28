@@ -9,17 +9,6 @@ def load_data():
     return pd.read_csv(url, encoding="latin1")
 
 df = load_data()
-# Limpieza de nombres de columnas
-df.columns = df.columns.str.strip()
-
-# Verifica que la columna exista
-st.write("📌 Columnas del DataFrame:", df.columns.tolist())
-
-# Verifica el acceso a "Tipo de instalación"
-if "Tipo de instalación" in df.columns:
-    instalaciones_seleccionadas = st.sidebar.multiselect("🏗️ Tipo de Instalación:", ["Todas"] + list(df["Tipo de instalación"].unique()), default=["Todas"])
-else:
-    st.error("⚠️ La columna 'Tipo de instalación' no se encuentra en el archivo CSV.")
 
 # 🛠 Limpiar nombres de columnas
 df.columns = df.columns.str.strip()
