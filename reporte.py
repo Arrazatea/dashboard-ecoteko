@@ -184,14 +184,21 @@ if not df_filtered.empty:
 else:
     st.warning("No hay datos disponibles para mostrar en el gráfico de Costo por Watt.")
 
-# 📊 **Boxplot del Costo por Watt**
-fig5 = px.box(
-    df_filtered, 
-    y=df_filtered["COSTO POR WATT"] * factor_cambio, 
-    x="Tipo de instalación", 
-    color="Tipo de instalacion", 
-    title=f"Variabilidad del Costo por Watt ({moneda})"
-)
+# Eliminar filas con valores nulos en "Tipo de instalacion" o "COSTO POR WATT"
+df_filtered = df_filtered.dropna(subset=["Tipo de instalacion", "COSTO POR WATT"])
+
+# Generar el boxplot solo si hay datos válidos
+if not df_filtered.empty:
+    fig5 = px.box(
+        df_filtered,
+        y=df_filtered["COSTO POR WATT"] * factor_cambio,
+        x="Tipo de instalacion",  # Asegúrate de que esté escrito correctamente
+        color="Tipo de instalacion",
+        title=f"Variabilidad del Costo por Watt ({moneda})"
+    )
+    st.plotly_chart(fig5)
+else:
+    st.warning("No hay datos disponibles para mostrar en el gráfico de Variabilidad del Costo por Watt.")
 
 # 📌 **Organizar gráficos en columnas**
 col1, col2 = st.columns(2)
