@@ -78,7 +78,7 @@ cuadrillas_seleccionadas = st.sidebar.multiselect("👷‍♂️ Selecciona las 
 potencias_seleccionadas = st.sidebar.multiselect("🔋 Potencia de Panel:", ["Todas"] + list(df["Potencia de paneles"].unique()), default=["Todas"])
 
 # 🏗️ **Filtro de Tipo de Instalación**
-instalaciones_seleccionadas = st.sidebar.multiselect("🏗️ Tipo de Instalación:", ["Todas"] + list(df["Tipo de instalaciÃ³n"].unique()), default=["Todas"])
+instalaciones_seleccionadas = st.sidebar.multiselect("🏗️ Tipo de Instalacion:", ["Todas"] + list(df["Tipo de instalacion"].unique()), default=["Todas"])
 
 # 🏢 **Filtro de Cliente (Nombre del Proyecto)**
 clientes_seleccionados = st.sidebar.multiselect("🏢 Selecciona Cliente:", ["Todos"] + list(df["Nombre del proyecto"].unique()), default=["Todos"])
@@ -149,14 +149,14 @@ fig1 = px.pie(
 )
 
 # 📊 **Gráfico 2: Costos por Tipo de Instalación**
-df_grouped = df_filtered.groupby("Tipo de instalaciÃ³n")[["Costo de equipos", "Costo estructura", "Costo mano de obra"]].sum().reset_index()
+df_grouped = df_filtered.groupby("Tipo de instalacion")[["Costo de equipos", "Costo estructura", "Costo mano de obra"]].sum().reset_index()
 
 fig2 = px.bar(
-    df_grouped.melt(id_vars=["Tipo de instalación"], value_vars=["Costo de equipos", "Costo estructura", "Costo mano de obra"]),
+    df_grouped.melt(id_vars=["Tipo de instalacion"], value_vars=["Costo de equipos", "Costo estructura", "Costo mano de obra"]),
     x="Tipo de instalación",
     y="value",
     color="variable",
-    title=f"Distribución de Costos por Tipo de Instalación ({moneda})"
+    title=f"Distribución de Costos por Tipo de Instalacion ({moneda})"
 )
 
 # 📊 **Gráfico 3: Costo Total de Estructura por Panel**
@@ -164,7 +164,7 @@ fig3 = px.bar(
     df_filtered, 
     x="Nombre del proyecto", 
     y=df_filtered["Costo total de estructura por panel"] * factor_cambio, 
-    color="Tipo de instalación", 
+    color="Tipo de instalacion", 
     title=f"Costo de Estructura por Panel ({moneda})"
 )
 
@@ -182,7 +182,7 @@ fig5 = px.box(
     df_filtered, 
     y=df_filtered["COSTO POR WATT"] * factor_cambio, 
     x="Tipo de instalación", 
-    color="Tipo de instalación", 
+    color="Tipo de instalacion", 
     title=f"Variabilidad del Costo por Watt ({moneda})"
 )
 
