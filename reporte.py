@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 
-# 📌 Configuración del Dashboard (DEBE SER LO PRIMERO)
+# 📌 CONFIGURACIÓN DEL DASHBOARD (Debe ser lo primero de Streamlit)
 st.set_page_config(page_title="Dashboard Ecoteko", layout="wide")
 
 # 📂 Cargar el archivo CSV desde GitHub
@@ -11,12 +11,26 @@ def load_data():
     url = "https://raw.githubusercontent.com/Arrazatea/dashboard-ecoteko/refs/heads/main/ReporteFebrero25.csv"
     df = pd.read_csv(url, encoding="latin1")
     
-    # Corregir posibles errores en los nombres de columnas
+    # Corregir nombres de columnas si es necesario
     df.columns = df.columns.str.replace("ï»¿", "").str.strip()
 
     return df
 
 df = load_data()
+
+# 🎨 **Estilos CSS Personalizados para Modo Oscuro**
+st.markdown("""
+    <style>
+        body, .main {
+            background-color: #101820 !important;
+            color: #F2AA4C !important;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
+# 📌 **Título del Dashboard**
+st.markdown("# ⚡ Dashboard de Instalaciones Residenciales - Ecoteko")
+
 
 # 🛠 Limpiar nombres de columnas
 df.columns = df.columns.str.strip()
