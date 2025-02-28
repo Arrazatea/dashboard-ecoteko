@@ -8,7 +8,7 @@ st.set_page_config(page_title="Dashboard Ecoteko", layout="wide")
 # 📂 Cargar CSV
 @st.cache_data
 def load_data():
-    url = "https://raw.githubusercontent.com/Arrazatea/dashboard-ecoteko/refs/heads/main/ReporteFebrero25.csv"
+    url = "https://raw.githubusercontent.com/Arrazatea/dashboard-ecoteko/refs/heads/main/dashboard.csv"
     df = pd.read_csv(url, encoding="latin1")
     df.columns = df.columns.str.replace("ï»¿", "").str.strip()
     return df
