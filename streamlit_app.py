@@ -5,13 +5,36 @@ import plotly.express as px
 # 📂 Cargar el archivo CSV desde GitHub
 @st.cache_data
 def load_data():
-    url = "https://raw.githubusercontent.com/Arrazatea/dashboard-ecoteko/refs/heads/main/ReporteFebrero25.csv"
-    return pd.read_csv(url, encoding="latin1")
+    url = "https://raw.githubusercontent.com/Arrazatea/dashboard-ecoteko/main/ReporteFebrero25.csv"
+    df = pd.read_csv(url, encoding="latin1")
+
+    # 🔍 Imprimir nombres de columnas para verificar
+    st.write("📌 Columnas del DataFrame:", df.columns.tolist())
+
+    # 🛠 Limpiar nombres de columnas y corregir nombres con caracteres erróneos
+    df.columns = df.columns.str.strip()
+    df.rename(columns={
+        "Tipo de instalaciÃ³n": "Tipo de instalación",
+        "Empresa": "Empresa",
+        "Mes": "Mes",
+        "Nombre del proyecto": "Nombre del proyecto",
+        "Cuadrilla": "Cuadrilla",
+        "No. de Paneles": "No. de Paneles",
+        "Potencia de paneles": "Potencia de paneles",
+        "Potencia del sistema": "Potencia del sistema",
+        "Costo de equipos": "Costo de equipos",
+        "Costo estructura": "Costo estructura",
+        "Costo mano de obra": "Costo mano de obra",
+        "Costo total": "Costo total",
+        "Costo de estructura vs. costo de modulos": "Costo de estructura vs. costo de modulos",
+        "Costo por panel": "Costo por panel",
+        "Costo total de estructura por panel": "Costo total de estructura por panel",
+        "COSTO POR WATT": "COSTO POR WATT"
+    }, inplace=True)
+
+    return df
 
 df = load_data()
-
-# 🛠 Limpiar nombres de columnas
-df.columns = df.columns.str.strip()
 
 # 💱 **Tipo de Cambio**
 TIPO_CAMBIO = 20.5
@@ -72,7 +95,7 @@ cuadrillas_seleccionadas = st.sidebar.multiselect("👷‍♂️ Selecciona las 
 potencias_seleccionadas = st.sidebar.multiselect("🔋 Potencia de Panel:", ["Todas"] + list(df["Potencia de paneles"].unique()), default=["Todas"])
 
 # 🏗️ **Filtro de Tipo de Instalación**
-instalaciones_seleccionadas = st.sidebar.multiselect("🏗️ Tipo de Instalación:", ["Todas"] + list(df["Tipo de instalaciÃ³n"].unique()), default=["Todas"])
+instalaciones_seleccionadas = st.sidebar.multiselect("🏗️ Tipo de Instalación:", ["Todas"] + list(df["Tipo de instalación"].unique()), default=["Todas"])
 
 # 🏢 **Filtro de Cliente (Nombre del Proyecto)**
 clientes_seleccionados = st.sidebar.multiselect("🏢 Selecciona Cliente:", ["Todos"] + list(df["Nombre del proyecto"].unique()), default=["Todos"])
@@ -110,74 +133,21 @@ with col3:
     potencia_total = df_filtered["Potencia del sistema"].sum()
     st.metric(label="⚡ Potencia Total Instalada", value=f"{potencia_total} W")
 
-col4, col5, col6 = st.columns(3)
-
-with col4:
-    costo_promedio_watt = df_filtered["COSTO POR WATT"].mean() * factor_cambio
-    st.metric(label=f"⚡ Costo Promedio por Watt ({moneda})", value=f"${costo_promedio_watt:,.2f}")
-
-with col5:
-    paneles_instalados = (df_filtered["No. de Paneles"].sum())
-    st.metric(label=f"⚡ Número de paneles" , value=f"{paneles_instalados:,.0f}")
-
-with col6:
-    costo_promedio_panel = df_filtered["Costo total de estructura por panel"].mean() * factor_cambio
-    st.metric(label=f"🏗️ Costo Promedio por Panel ({moneda})", value=f"${costo_promedio_panel:,.2f}")
-
 # 📊 **Gráfico 1: Distribución de Costos**
-cost_distribution = pd.DataFrame({
-    "Categoría": ["Equipos", "Estructura", "Mano de Obra"],
-    "Monto": [
-        df_filtered["Costo de equipos"].sum() * factor_cambio,
-        df_filtered["Costo estructura"].sum() * factor_cambio,
-        df_filtered["Costo mano de obra"].sum() * factor_cambio
-    ]
-})
-
 fig1 = px.pie(
-    cost_distribution, 
-    names="Categoría", 
-    values="Monto", 
-    title=f"Distribución de Costos en {moneda}",
-    color_discrete_sequence=["#4682B4", "#FF9999", "#66B3FF"]
+    df_filtered.melt(id_vars=["Tipo de instalación"], value_vars=["Costo de equipos", "Costo estructura", "Costo mano de obra"]),
+    names="variable",
+    values="value",
+    title=f"Distribución de Costos en {moneda}"
 )
 
-# 📊 **Gráfico 2: Costos por Tipo de Instalación**
-df_grouped = df_filtered.groupby("Tipo de instalaciÃ³n")[["Costo de equipos", "Costo estructura", "Costo mano de obra"]].sum().reset_index()
-
+# 📊 **Gráfico 2: Costo Total de Estructura por Panel**
 fig2 = px.bar(
-    df_grouped.melt(id_vars=["Tipo de instalación"], value_vars=["Costo de equipos", "Costo estructura", "Costo mano de obra"]),
-    x="Tipo de instalación",
-    y="value",
-    color="variable",
-    title=f"Distribución de Costos por Tipo de Instalación ({moneda})"
-)
-
-# 📊 **Gráfico 3: Costo Total de Estructura por Panel**
-fig3 = px.bar(
-    df_filtered, 
-    x="Nombre del proyecto", 
-    y=df_filtered["Costo total de estructura por panel"] * factor_cambio, 
-    color="Tipo de instalación", 
+    df_filtered,
+    x="Nombre del proyecto",
+    y=df_filtered["Costo total de estructura por panel"] * factor_cambio,
+    color="Tipo de instalación",
     title=f"Costo de Estructura por Panel ({moneda})"
-)
-
-# 📊 **Gráfico 4: Costo por Watt de cada Instlación**
-fig4 = px.bar(
-    df_filtered, 
-    x="Nombre del proyecto", 
-    y=df_filtered["COSTO POR WATT"] * factor_cambio, 
-    color="Tipo de instalación", 
-    title=f"Costo por Watt ({moneda})"
-)
-
-# 📊 **Boxplot del Costo por Watt**
-fig5 = px.box(
-    df_filtered, 
-    y=df_filtered["COSTO POR WATT"] * factor_cambio, 
-    x="Tipo de instalación", 
-    color="Tipo de instalación", 
-    title=f"Variabilidad del Costo por Watt ({moneda})"
 )
 
 # 📌 **Organizar gráficos en columnas**
@@ -188,14 +158,6 @@ with col1:
     st.plotly_chart(fig1)
 
 with col2:
-    st.subheader(f"🏗️ Costos por Tipo de Instalación ({moneda})")
+    st.subheader(f"🏗️ Costo de Estructura por Panel ({moneda})")
     st.plotly_chart(fig2)
 
-st.subheader(f"🏗️ Costo de Estructura por Panel ({moneda})")
-st.plotly_chart(fig3)
-
-st.subheader(f"🏗️ Costo por Watt ({moneda})")
-st.plotly_chart(fig4)
-
-st.subheader(f"⚡ Análisis de Outliers en Costo por Watt ({moneda})")
-st.plotly_chart(fig5)
