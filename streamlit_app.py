@@ -8,10 +8,10 @@ def load_data():
     url = "https://raw.githubusercontent.com/Arrazatea/dashboard-ecoteko/main/ReporteFebrero25.csv"
     df = pd.read_csv(url, encoding="latin1")
 
-    # 🔍 Imprimir nombres de columnas para verificar
+    # 🔍 Mostrar nombres de columnas para depuración
     st.write("📌 Columnas del DataFrame:", df.columns.tolist())
 
-    # 🛠 Limpiar nombres de columnas y corregir nombres con caracteres erróneos
+    # 🛠 Renombrar columnas con caracteres extraños
     df.columns = df.columns.str.strip()
     df.rename(columns={
         "Tipo de instalaciÃ³n": "Tipo de instalación",
@@ -119,7 +119,7 @@ st.markdown("## 📊 Indicadores Clave")
 
 factor_cambio = 1 if moneda == "Pesos" else 1 / TIPO_CAMBIO
 
-col1, col2, col3 = st.columns(3)
+col1, col2, col3, col4 = st.columns(4)
 
 with col1:
     total_proyectos = df_filtered["Nombre del proyecto"].nunique()
@@ -132,6 +132,10 @@ with col2:
 with col3:
     potencia_total = df_filtered["Potencia del sistema"].sum()
     st.metric(label="⚡ Potencia Total Instalada", value=f"{potencia_total} W")
+
+with col4:
+    costo_promedio_watt = df_filtered["COSTO POR WATT"].mean() * factor_cambio
+    st.metric(label=f"⚡ Costo Promedio por Watt ({moneda})", value=f"${costo_promedio_watt:,.2f}")
 
 # 📊 **Gráfico 1: Distribución de Costos**
 fig1 = px.pie(
