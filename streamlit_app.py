@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import plotly.express as px
 
-# -------- Cargar y preparar datos -------- #
+# ---------- CARGAR DATOS ----------
 @st.cache_data
 def cargar_datos():
     df = pd.read_csv("reporte_proyectos.csv")
@@ -33,27 +33,38 @@ def cargar_datos():
 
 df = cargar_datos()
 
-# -------- SIDEBAR: FILTROS -------- #
+# ---------- FILTROS ----------
 st.sidebar.header("⚙️ Filtros")
 
 moneda = st.sidebar.radio("Seleccionar Moneda:", ["Pesos", "Dólares"])
-
 meses = st.sidebar.multiselect("📅 Selecciona los Meses:", options=df['Mes'].dropna().unique(), default=df['Mes'].dropna().unique())
-cuadrillas = st.sidebar.multiselect("👷 Selecciona las Cuadrillas:", options=df['Tamaño total Cuadrilla(s)'].dropna().unique(), default=df['Tamaño total Cuadrilla(s)'].dropna().unique())
+
+# Validación: Cuadrilla
+if "Tamaño total Cuadrilla(s)" in df.columns:
+    cuadrilla_col = "Tamaño total Cuadrilla(s)"
+else:
+    cuadrilla_col = None
+    st.sidebar.warning("⚠️ La columna 'Tamaño total Cuadrilla(s)' no existe en los datos.")
+
+# Filtros adicionales
+cuadrillas = st.sidebar.multiselect("👷 Selecciona las Cuadrillas:", options=df[cuadrilla_col].dropna().unique() if cuadrilla_col else [], default=df[cuadrilla_col].dropna().unique() if cuadrilla_col else [])
 potencias = st.sidebar.multiselect("🔋 Potencia de Panel:", options=sorted(df['Potencia por Panel'].dropna().unique()), default=sorted(df['Potencia por Panel'].dropna().unique()))
 tipos = st.sidebar.multiselect("🏗️ Tipo de Instalación:", options=df['Tipo Proyecto Nombre'].dropna().unique(), default=df['Tipo Proyecto Nombre'].dropna().unique())
 clientes = st.sidebar.multiselect("🏢 Selecciona Cliente:", options=df['Nombre Cliente'].dropna().unique(), default=df['Nombre Cliente'].dropna().unique())
 
-# -------- APLICAR FILTROS -------- #
+# ---------- APLICAR FILTROS ----------
 df_filtros = df[
     (df['Mes'].isin(meses)) &
-    (df['Tamaño total Cuadrilla(s)'].isin(cuadrillas)) &
-    (df['Potencia por Panel'].isin(potencias)) &
     (df['Tipo Proyecto Nombre'].isin(tipos)) &
     (df['Nombre Cliente'].isin(clientes))
 ]
 
-# -------- KPIs -------- #
+if cuadrilla_col:
+    df_filtros = df_filtros[df_filtros[cuadrilla_col].isin(cuadrillas)]
+
+df_filtros = df_filtros[df_filtros['Potencia por Panel'].isin(potencias)]
+
+# ---------- KPIs ----------
 st.title("⚡ Dashboard de Instalaciones Residenciales - Ecoteko")
 st.subheader("📊 Indicadores Clave")
 
@@ -74,7 +85,7 @@ col4, col5 = st.columns(2)
 col4.metric("⚙️ Costo Promedio por Watt", f"${costo_watt:,.2f}")
 col5.metric("🔩 Costo Promedio por Panel", f"${costo_panel:,.2f}")
 
-# -------- GRAFICAS -------- #
+# ---------- GRAFICAS ----------
 st.subheader("📉 Costo por Watt por Proyecto")
 fig = px.bar(df_filtros, x="Nombre Cliente", y="Costo por Watt", color="Tipo Proyecto Nombre",
              labels={"Costo por Watt": "Costo por Watt (MXN)"}, title="Costo por Watt por Proyecto")
