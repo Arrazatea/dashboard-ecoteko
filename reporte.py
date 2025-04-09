@@ -100,6 +100,9 @@ if "Todas" not in instalaciones_seleccionadas:
     df_filtered = df_filtered[df_filtered["Tipo de instalación"].isin(instalaciones_seleccionadas)]
 if "Todos" not in clientes_seleccionados:
     df_filtered = df_filtered[df_filtered["Nombre del proyecto"].isin(clientes_seleccionados)]
+# 🧪 DEBUG
+st.write("📅 Meses después del filtro:", df_filtered["Mes"].unique())
+st.write("📊 Proyectos filtrados:", df_filtered["Nombre del proyecto"].unique())
 
 # 📌 **KPIs Principales**
 st.markdown("## 📊 Indicadores Clave")
