@@ -8,7 +8,7 @@ st.set_page_config(page_title="Dashboard Ecoteko", layout="wide")
 # 📂 Cargar CSV
 @st.cache_data
 def load_data():
-    url = "https://raw.githubusercontent.com/Arrazatea/dashboard-ecoteko/refs/heads/main/ReporteMarzo25.csv"
+    url = "https://raw.githubusercontent.com/Arrazatea/dashboard-ecoteko/refs/heads/main/dashboard.csv"
     df = pd.read_csv(url, encoding="latin1")
     df.columns = df.columns.str.replace("ï»¿", "").str.strip()
     return df
@@ -18,10 +18,6 @@ df = load_data()
 
 # 🛠 Limpiar nombres de columnas
 df.columns = df.columns.str.strip()
-
-# 🧼 Normalizar valores en la columna "Mes"
-df["Mes"] = df["Mes"].astype(str).str.strip().str.capitalize()
-df = df[df["Mes"].notna() & (df["Mes"] != "nan")]
 
 # 💱 **Tipo de Cambio**
 TIPO_CAMBIO = 20.5
@@ -100,9 +96,6 @@ if "Todas" not in instalaciones_seleccionadas:
     df_filtered = df_filtered[df_filtered["Tipo de instalación"].isin(instalaciones_seleccionadas)]
 if "Todos" not in clientes_seleccionados:
     df_filtered = df_filtered[df_filtered["Nombre del proyecto"].isin(clientes_seleccionados)]
-# 🧪 DEBUG
-st.write("📅 Meses después del filtro:", df_filtered["Mes"].unique())
-st.write("📊 Proyectos filtrados:", df_filtered["Nombre del proyecto"].unique())
 
 # 📌 **KPIs Principales**
 st.markdown("## 📊 Indicadores Clave")
@@ -220,4 +213,3 @@ with col2:
 
 st.subheader(f"🏗️ Costo de Estructura por Panel ({moneda})")
 st.plotly_chart(fig3)
-
