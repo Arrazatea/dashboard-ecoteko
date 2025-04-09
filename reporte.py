@@ -11,6 +11,9 @@ def load_data():
     url = "https://raw.githubusercontent.com/Arrazatea/dashboard-ecoteko/refs/heads/main/ReporteMarzo25.csv"
     df = pd.read_csv(url, encoding="latin1")
     df.columns = df.columns.str.replace("ï»¿", "").str.strip()
+    df.columns = df.columns.str.strip()
+    df["Mes"] = df["Mes"].astype(str).str.strip().str.capitalize()
+    df = df[df["Mes"] != "nan"]
     return df
 
 df = load_data()
