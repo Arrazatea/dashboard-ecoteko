@@ -61,7 +61,7 @@ if "Todas" not in cuadrillas_seleccionadas:
 if "Todas" not in potencias_seleccionadas:
     df_filtered = df_filtered[df_filtered["Potencia de paneles"].isin(potencias_seleccionadas)]
 if "Todas" not in instalaciones_seleccionadas:
-    df_filtered = df_filtered[df_filtered["Tipo de instalación"].isin(instalaciones_seleccionadas)]
+    df_filtered = df_filtered[df_filtered["Tipo de instalacion"].isin(instalaciones_seleccionadas)]
 if "Todos" not in clientes_seleccionados:
     df_filtered = df_filtered[df_filtered["Nombre del proyecto"].isin(clientes_seleccionados)]
 
