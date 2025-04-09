@@ -9,6 +9,7 @@ st.set_page_config(page_title="Dashboard Ecoteko", layout="wide")
 def load_data():
     url = "https://raw.githubusercontent.com/Arrazatea/dashboard-ecoteko/main/ReporteMarzo25.csv"
     df = pd.read_csv(url, encoding="latin1")
+    df.rename(columns={"Tipo de instalaciÃ³n": "Tipo de instalacion"}, inplace=True)
     df.columns = df.columns.str.replace("ï»¿", "").str.strip()
 
     # Normalizar columna Mes y Cuadrilla
@@ -95,19 +96,16 @@ fig2 = px.bar(df_grouped.melt(id_vars=["Tipo de instalacion"]), x="Tipo de insta
 fig3 = px.bar(df_filtered, x="Nombre del proyecto", y=df_filtered["Costo total de estructura por panel"] * factor,
               color="Tipo de instalacion", title="Costo de Estructura por Panel")
 
-# Costo por Watt
 df_cpw = df_filtered.dropna(subset=["Nombre del proyecto", "COSTO POR WATT"])
 if not df_cpw.empty:
     fig4 = px.bar(df_cpw, x="Nombre del proyecto", y=df_cpw["COSTO POR WATT"] * factor, color="Tipo de instalacion", title="Costo por Watt")
     st.plotly_chart(fig4)
 
-# Boxplot
 df_box = df_filtered.dropna(subset=["Tipo de instalacion", "COSTO POR WATT"])
 if not df_box.empty:
     fig5 = px.box(df_box, x="Tipo de instalacion", y=df_box["COSTO POR WATT"] * factor, color="Tipo de instalacion", title="Variabilidad del Costo por Watt")
     st.plotly_chart(fig5)
 
-# 📌 Organizar
 col1, col2 = st.columns(2)
 col1.subheader(f"💰 Distribución de Costos ({moneda})")
 col1.plotly_chart(fig1)
