@@ -4,7 +4,6 @@ import plotly.express as px
 
 st.set_page_config(page_title="Dashboard Ecoteko", layout="wide")
 
-# 📂 Cargar CSV
 @st.cache_data
 def load_data():
     url = "https://raw.githubusercontent.com/Arrazatea/dashboard-ecoteko/main/ReporteMarzo25.csv"
@@ -12,7 +11,6 @@ def load_data():
     df.rename(columns={"Tipo de instalaciÃ³n": "Tipo de instalacion"}, inplace=True)
     df.columns = df.columns.str.replace("ï»¿", "").str.strip()
 
-    # Normalizar columna Mes y Cuadrilla
     df["Mes"] = df["Mes"].astype(str).str.strip().str.capitalize()
     df = df[df["Mes"].notna() & (df["Mes"] != "nan")]
 
@@ -21,14 +19,17 @@ def load_data():
     else:
         df["Cuadrilla"] = "Sin asignar"
 
+    # Asegurar que columnas de costos no tengan NaNs
+    for col in ["Costo de equipos", "Costo estructura", "Costo mano de obra"]:
+        if col in df.columns:
+            df[col] = df[col].fillna(0)
+
     return df
 
 df = load_data()
-
 TIPO_CAMBIO = 20.5
 
-# 🎨 Estilo
-st.markdown("""
+st.markdown(\"\"\"
 <style>
     body, .main { background-color: #101820 !important; color: #F2AA4C !important; }
     .css-1d391kg, .stSidebar { background-color: #1A1A1A !important; }
@@ -36,13 +37,13 @@ st.markdown("""
     .logo-container { display: flex; justify-content: center; margin-bottom: 20px; }
     .logo-container img { background-color: rgba(255, 255, 255, 0.1); padding: 15px; border-radius: 15px; }
 </style>
-""", unsafe_allow_html=True)
+\"\"\", unsafe_allow_html=True)
 
 logo_url = "https://raw.githubusercontent.com/Arrazatea/dashboard-ecoteko/main/LOGO.png"
 st.markdown(f'<div class="logo-container"><img src="{logo_url}" width="400"></div>', unsafe_allow_html=True)
 st.markdown("# ⚡ Dashboard de Instalaciones Residenciales - Ecoteko")
 
-# 📌 Sidebar Filtros
+# Sidebar
 st.sidebar.title("⚙️ Filtros")
 moneda = st.sidebar.radio("💱 Seleccionar Moneda:", ["Pesos", "Dólares"])
 meses_seleccionados = st.sidebar.multiselect("📅 Meses:", ["Todos"] + sorted(df["Mes"].unique()), default=["Todos"])
@@ -51,9 +52,7 @@ potencias_seleccionadas = st.sidebar.multiselect("🔋 Potencia:", ["Todas"] + s
 instalaciones_seleccionadas = st.sidebar.multiselect("🏗️ Tipo de Instalación:", ["Todas"] + sorted(df["Tipo de instalacion"].dropna().unique()), default=["Todas"])
 clientes_seleccionados = st.sidebar.multiselect("🏢 Cliente:", ["Todos"] + sorted(df["Nombre del proyecto"].dropna().unique()), default=["Todos"])
 
-# 🔍 Filtros aplicados
 df_filtered = df.copy()
-
 if "Todos" not in meses_seleccionados:
     df_filtered = df_filtered[df_filtered["Mes"].isin(meses_seleccionados)]
 if "Todas" not in cuadrillas_seleccionadas:
@@ -65,8 +64,6 @@ if "Todas" not in instalaciones_seleccionadas:
 if "Todos" not in clientes_seleccionados:
     df_filtered = df_filtered[df_filtered["Nombre del proyecto"].isin(clientes_seleccionados)]
 
-# 📊 KPIs
-st.markdown("## 📊 Indicadores Clave")
 factor = 1 if moneda == "Pesos" else 1 / TIPO_CAMBIO
 
 col1, col2, col3 = st.columns(3)
@@ -79,7 +76,6 @@ col4.metric(f"⚙️ Costo Prom. por Watt ({moneda})", f"${df_filtered['COSTO PO
 col5.metric("🔩 Paneles", int(df_filtered["No. de Paneles"].sum()))
 col6.metric(f"🏗️ Costo Prom. por Panel ({moneda})", f"${df_filtered['Costo total de estructura por panel'].mean() * factor:,.2f}")
 
-# 📊 Gráficos
 cost_distribution = pd.DataFrame({
     "Categoría": ["Equipos", "Estructura", "Mano de Obra"],
     "Monto": [
@@ -88,6 +84,8 @@ cost_distribution = pd.DataFrame({
         df_filtered["Costo mano de obra"].sum() * factor
     ]
 })
+
+cost_distribution = cost_distribution[cost_distribution["Monto"] > 0]
 fig1 = px.pie(cost_distribution, names="Categoría", values="Monto", title=f"Distribución de Costos en {moneda}")
 
 df_grouped = df_filtered.groupby("Tipo de instalacion")[["Costo de equipos", "Costo estructura", "Costo mano de obra"]].sum().reset_index()
