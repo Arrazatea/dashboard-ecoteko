@@ -19,7 +19,6 @@ def load_data():
     else:
         df["Cuadrilla"] = "Sin asignar"
 
-    # Asegurar que columnas de costos no tengan NaNs
     for col in ["Costo de equipos", "Costo estructura", "Costo mano de obra"]:
         if col in df.columns:
             df[col] = df[col].fillna(0)
@@ -29,7 +28,7 @@ def load_data():
 df = load_data()
 TIPO_CAMBIO = 20.5
 
-st.markdown(\"\"\"
+st.markdown("""
 <style>
     body, .main { background-color: #101820 !important; color: #F2AA4C !important; }
     .css-1d391kg, .stSidebar { background-color: #1A1A1A !important; }
@@ -37,13 +36,12 @@ st.markdown(\"\"\"
     .logo-container { display: flex; justify-content: center; margin-bottom: 20px; }
     .logo-container img { background-color: rgba(255, 255, 255, 0.1); padding: 15px; border-radius: 15px; }
 </style>
-\"\"\", unsafe_allow_html=True)
+""", unsafe_allow_html=True)
 
 logo_url = "https://raw.githubusercontent.com/Arrazatea/dashboard-ecoteko/main/LOGO.png"
 st.markdown(f'<div class="logo-container"><img src="{logo_url}" width="400"></div>', unsafe_allow_html=True)
 st.markdown("# ⚡ Dashboard de Instalaciones Residenciales - Ecoteko")
 
-# Sidebar
 st.sidebar.title("⚙️ Filtros")
 moneda = st.sidebar.radio("💱 Seleccionar Moneda:", ["Pesos", "Dólares"])
 meses_seleccionados = st.sidebar.multiselect("📅 Meses:", ["Todos"] + sorted(df["Mes"].unique()), default=["Todos"])
@@ -85,7 +83,6 @@ cost_distribution = pd.DataFrame({
     ]
 })
 
-cost_distribution = cost_distribution[cost_distribution["Monto"] > 0]
 fig1 = px.pie(cost_distribution, names="Categoría", values="Monto", title=f"Distribución de Costos en {moneda}")
 
 df_grouped = df_filtered.groupby("Tipo de instalacion")[["Costo de equipos", "Costo estructura", "Costo mano de obra"]].sum().reset_index()
