@@ -1,0 +1,46 @@
+﻿Empresa,Mes,Nombre del proyecto,Cuadrilla,No. de Paneles,Potencia de paneles,Potencia del sistema,Costo de equipos,Costo estructura,Costo mano de obra,Costo total,Costo de estructura vs. costo de modulos,Tipo de instalación,Costo por panel,Costo total de estructura por panel,COSTO POR WATT
+Ecoteko,Enero,Javier Medrano Rojas,Ruben,8,585,4680,23050.09,7846.94,16000,46897.03,0.34,Estructura PTR,5862.12875,980.8675,10.02073291
+Ecoteko,Enero,Rodolfo Fuentes,Contralec,18,615,11070,45809.83,21411.27,27000,94221.1,0.47,Unirac Ascender,5234.505556,1189.515,8.511391147
+Ecoteko,Enero,Ramiro Morales ,Contralec,12,585,7020,29227.95,13817.67,18000,61045.62,0.47,Unirac Ascender,5087.135,1151.4725,8.695957265
+Ecoteko,Enero,Alberto Plancarte,Jose,8,585,4680,14118.08,12048.5,20300,46466.58,0.85,Estructura PTR,5808.3225,1506.0625,9.92875641
+Ecoteko,Enero,Guadalupe Saldaña,Contralec,6,585,3510,19065.46,12768,9000,40833.46,0.67,Unirac Ascender,6805.576667,2128,11.63346439
+Ecoteko,Enero,Cruz Ornelas García,Contralec,6,615,3690,20294.14,8389.11,9000,37683.25,0.41,Unirac Ascender,6280.541667,1398.185,10.21226287
+Ecoteko,Enero,Tomas Olascoaga,Contralec,2,555,1110,3690.62,4482.5,3000,11173.12,1.21,Unirac Ascender,5586.56,2241.25,10.06587387
+Ecoteko,Enero,Jose Angel Jaramillo,Contralec,10,615,6150,31639.46,13656.55,15000,60296.01,0.43,Unirac Ascender,6029.601,1365.655,9.804229268
+Ecoteko,Febrero,Victor Alejandro Herrera,Contralec,8,615,4920,24233.22,10897.74,12000,47130.96,0.45,Unirac Ascender,5891.37,1362.2175,9.579463415
+Ecoteko,Febrero,Gertrudis Zarzoza,Contralec,8,615,4920,24233.22,12048.91,12000,48282.13,0.50,Unirac Ascender,6035.26625,1506.11375,9.813441057
+Ecoteko,Febrero,Mauricio Garza Lozano,Contralec,10,615,6150,28172.3,13070.72,15000,56243.02,0.46,Unirac Ascender,5624.302,1307.072,9.145206504
+Ecoteko,Febrero,Hector Madrigal,Contralec,8,615,4920,24798.1,10575.7,12000,47373.8,0.43,Unirac Ascender,5921.725,1321.9625,9.628821138
+Ecoteko,Febrero,Jose Ignacio Ortega,Contralec,10,615,6150,29937.09,13140.71,15000,58077.8,0.44,Unirac Ascender,5807.78,1314.071,9.443544715
+Ecoteko,Febrero,Mauricio Elizondo,Jose,30,615,18450,80553.86,43847.31,36000,160401.17,0.54,Unirac Ascender,5346.705667,1461.577,8.693830352
+Ecoteko,Febrero,Roberto Sanchez Valladares,Contralec,14,585,8190,35924.87,23265.65,22500,81690.52,0.65,Unirac Ascender,5835.037143,1661.832143,9.974422466
+Ecoteko,Febrero,Carlos Fernando Rodriguez,Contralec,8,615,4920,12477.51,9690.61,12000,34168.12,0.78,Unirac Ascender,4271.015,1211.32625,6.944739837
+Ecoteko,Febrero,Bernardo Bremer,Jose,40,580,23200,182361.62,52290.48,89935.27,324587.37,0.29,Estructura PTR,8114.68425,1307.262,13.99083491
+Ecoteko,Febrero,Gloria Alicia Tamez,Contralec,10,615,6150,23038.04,13904.44,15000,51942.48,0.60,Unirac Ascender,5194.248,1390.444,8.445931707
+Ecoteko,Febrero,Homero Villarreal,Contralec,10,615,6150,25791.5,13956.41,15000,54747.91,0.54,Unirac Ascender,5474.791,1395.641,8.902099187
+Ecoteko,Marzo,Jesus Guerrero Lujan,Contralec,9,615,5535,25586.99,14032.19,13500,53119.18,0.55,Unirac Ascender,5902.131111,1559.132222,9.596961156
+Ecoteko,Marzo,Cesar Calva,Jose,21,615,12915,57453.48,24479.89,24068.5,106001.87,0.43,Unirac Ascender,5047.708095,1165.709048,8.207655439
+Ecoteko,Marzo,Jesus Antonio Reyna,Contralec,12,615,7380,31098.6,16743.94,18000,65842.54,0.54,Unirac Ascender,5486.878333,1395.328333,8.921753388
+Ecoteko,Marzo,Mauricio Zambrano,Jose,17,615,10455,47570.44,19243.73,20768.5,87582.67,0.40,Unirac Ascender,5151.921765,1131.984118,8.37710856
+Ecoteko,Marzo,Armando Flores,Contralec,12,615,7380,32584.32,14194.65,18000,64778.97,0.44,Unirac Ascender,5398.2475,1182.8875,8.777638211
+Ecoteko,Marzo,Marco Antonio Gonzalez,Contralec,8,615,4920,22627.76,10151.05,12000,44778.81,0.45,Unirac Ascender,5597.35125,1268.88125,9.101384146
+Ecoteko,Marzo,Leonel de la Cruz,Jose,16,615,9840,37019.21,8244.54,19200,64463.75,0.22,Lamina,4028.984375,515.28375,6.551194106
+Ecoteko,Marzo,Carlos Alberto Horta Esparza,Contralec,6,615,3690,16370.29,10741.03,9000,36111.32,0.66,Unirac Ascender,6018.553333,1790.171667,9.786265583
+Ecoteko,Marzo,Omar Fernando Barboza ,Contralec,14,615,8610,32857.61,20804.89,22200,75862.5,0.63,Unirac Ascender,5418.75,1486.063571,8.81097561
+Ecoteko,Marzo,Lizette Irais,Jose,13,615,7995,32679.84,15885.78,15600,64165.62,0.49,Unirac Ascender,4935.816923,1221.983077,8.025718574
+Ecoteko,Marzo,Jesus Chavez,Juan Pablo,3,550,1650,3956.94,4227,0,8183.94,1.07,Unirac Ascender,2727.98,1409,4.959963636
+Ecoteko,Abril,Carlos Alberto Rodriguez Maillard,Contralec,8,615,4920,19875.56,11039.99,12800,43715.55,0.52,Unirac Ascender,5464.44375,1282.10625,8.88527439
+Ecoteko,Abril,David Mata,Contralec,6,615,3690,16644.78,8809.24,9600,35054.02,0.53,Unirac Ascender,5842.336667,1468.206667,9.499734417
+Ecoteko,Abril,Carlos Alberto Mosqueda García,Jose,10,615,6150,21864.54,19738.26,23150,64752.8,0.90,Qualum PTR,6475.28,1973.826,10.52891057
+Ecoteko,Abril,Roberto Valenzuela Perez,Contralec,7,615,4305,18226.02,10025.86,11200,39451.88,0.55,Unirac Ascender,5635.982857,1432.265714,9.164199768
+Ecoteko,Abril,Jacobo Eduardo Garza Villanueva,Contralec,11,615,6765,31708.32,13192.02,18616,63516.34,0.42,Unirac Ascender,5774.212727,1199.274545,9.388963784
+Ecoteko,Abril,Elizabeth Torres Flores,Contralec,11,615,6765,27638.03,11012.91,17600,56250.94,0.40,Unirac Ascender,5113.721818,1001.173636,8.314994826
+Ecoteko,Abril,Cecy Guzman,Contralec,24,615,14760,53368.28,48114.32,38400,139882.6,0.90,Unirac Ascender,5828.441667,2004.763333,9.477140921
+Ecoteko,Abril,Virgilio Padilla de la Paz,Darwin,10,615,6150,26162.99,10062.28,12000,48225.27,0.38,Unirac Ascender,4822.527,1006.228,7.841507317
+Ecoteko,Abril,Marco Ramirez,Jose,16,615,9840,35655.8,28775.87,28800,93231.67,0.81,Qualum PTR,5826.979375,1798.491875,9.474763211
+Ecoteko,Abril,Manuel Guadalupe Treviño Ruiz,Jose,8,615,4920,19816.55,10160,9600,39576.55,0.51,Unirac Ascender,4947.06875,1270,8.044014228
+Ecoteko,Abril,Eduardo Willis,Darwin,6,615,3690,16646.91,4533.84,7200,28380.75,0.27,Unirac PR,4730.125,755.64,7.691260163
+Ecoteko,Abril,María del Socorro Rios Rodriguez,Darwin,16,615,9840,35741.14,18403.26,19200,73344.4,0.51,Unirac Ascender,4584.025,1150.20375,7.453699187
+Ecoteko,Abril,Rosa María Martinez Rodriguez,Darwin,12,615,7380,26004.94,8890.32,14400,49295.26,0.34,Unirac Ascender,4107.938333,740.86,6.679574526
+Ecoteko,Abril,Jaime Fernando Garza Valero,Darwin,16,615,9840,35741.14,17070.72,19200,72011.86,0.48,Unirac Ascender,4500.74125,1066.92,7.318278455
+Ecoteko,Abril,David Delgado Quiroz,Darwin,8,615,4920,19740.77,10256.85,9200,39197.62,0.52,Unirac Ascender,4899.7025,1282.10625,7.966995935
