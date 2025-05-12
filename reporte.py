@@ -27,8 +27,6 @@ def load_data():
 if st.sidebar.button("🔄 Forzar recarga"):
     st.cache_data.clear()
 df = load_data()
-st.write("✅ Vista previa de los datos cargados:")
-st.dataframe(df.head())
 TIPO_CAMBIO = 20.5
 
 st.markdown("""
