@@ -5,6 +5,8 @@ import plotly.express as px
 st.set_page_config(page_title="Dashboard Ecoteko", layout="wide")
 
 @st.cache_data
+if st.sidebar.button("🔄 Forzar recarga"):
+    st.cache_data.clear()
 def load_data():
     url = "https://raw.githubusercontent.com/Arrazatea/dashboard-ecoteko/refs/heads/main/ReporteAbril25.csv"
     df = pd.read_csv(url, encoding="latin1")
@@ -13,6 +15,8 @@ def load_data():
 
     df["Mes"] = df["Mes"].astype(str).str.strip().str.capitalize()
     df = df[df["Mes"].notna() & (df["Mes"] != "nan")]
+    st.write("✅ Vista previa de los datos cargados:")
+    st.dataframe(df.head())
 
     if "Cuadrilla" in df.columns:
         df["Cuadrilla"] = df["Cuadrilla"].fillna("Sin asignar").astype(str).str.strip()
