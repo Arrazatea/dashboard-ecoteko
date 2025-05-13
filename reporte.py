@@ -30,7 +30,7 @@ tipo_proyecto = st.sidebar.radio("🔘 Selecciona el tipo de proyecto:", ["BT", 
 # -------------------
 @st.cache_data
 def load_data_bt():
-    url = "https://raw.githubusercontent.com/Arrazatea/dashboard-ecoteko/refs/heads/main/ReporteAbril25.csv"
+    url = "https://raw.githubusercontent.com/Arrazatea/dashboard-ecoteko/refs/heads/main/ReporteAbril25BT.csv"
     df = pd.read_csv(url, encoding="latin1")
     df.rename(columns={"Tipo de instalaciÃ³n": "Tipo de instalacion"}, inplace=True)
     df.columns = df.columns.str.replace("ï»¿", "").str.strip()
