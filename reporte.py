@@ -51,7 +51,7 @@ if tipo_proyecto == "BT":
     
     
     
-        df = load_data()
+    df = load_data()
     
     TIPO_CAMBIO = 20.5
     
@@ -193,7 +193,7 @@ elif tipo_proyecto == "MT":
     tipo_proyecto = st.sidebar.radio("Selecciona:", ["BT", "MT"])
     
     
-        df = load_data(tipo_proyecto)
+    df = load_data(tipo_proyecto)
     
     
     moneda = st.sidebar.radio("💱 Moneda:", ["Pesos", "Dólares"])
