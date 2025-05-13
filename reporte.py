@@ -72,7 +72,11 @@ else:
 meses_sel = st.sidebar.multiselect("📅 Meses:", ["Todos"] + sorted(df["Mes"].dropna().unique()), default=["Todos"])
 cuadrillas_sel = st.sidebar.multiselect("👷 Cuadrillas:", ["Todas"] + sorted(df["Cuadrilla"].dropna().unique()), default=["Todas"])
 potencias_sel = st.sidebar.multiselect("🔋 Potencia:", ["Todas"] + sorted(df["Potencia de paneles"].dropna().unique()), default=["Todas"])
-instalaciones_sel = st.sidebar.multiselect("🏗️ Tipo de Instalación:", ["Todas"] + sorted(df["Tipo de instalacion"].dropna().unique()), default=["Todas"])
+if "Tipo de instalacion" in df.columns:
+    instalaciones = sorted(df["Tipo de instalacion"].dropna().unique())
+    instalaciones_sel = st.sidebar.multiselect("🏗️ Tipo de Instalación:", ["Todas"] + instalaciones, default=["Todas"])
+    if "Todas" not in instalaciones_sel:
+        df_filtrado = df_filtrado[df_filtrado["Tipo de instalacion"].isin(instalaciones_sel)]
 clientes_sel = st.sidebar.multiselect("🏢 Cliente:", ["Todos"] + sorted(df["Nombre del proyecto"].dropna().unique()), default=["Todos"])
 
 df_filtrado = df.copy()
@@ -82,8 +86,6 @@ if "Todas" not in cuadrillas_sel:
     df_filtrado = df_filtrado[df_filtrado["Cuadrilla"].isin(cuadrillas_sel)]
 if "Todas" not in potencias_sel:
     df_filtrado = df_filtrado[df_filtrado["Potencia de paneles"].isin(potencias_sel)]
-if "Todas" not in instalaciones_sel:
-    df_filtrado = df_filtrado[df_filtrado["Tipo de instalacion"].isin(instalaciones_sel)]
 if "Todos" not in clientes_sel:
     df_filtrado = df_filtrado[df_filtrado["Nombre del proyecto"].isin(clientes_sel)]
 
