@@ -30,7 +30,6 @@ def load_data(tipo):
     url = f"https://raw.githubusercontent.com/Arrazatea/dashboard-ecoteko/refs/heads/main/ReporteAbril25{tipo}.csv"
     df = pd.read_csv(url, encoding="latin1")
     df = normalize_columns(df)
-    df.rename(columns={"Tipo de instalacion": "Tipo de instalacion"}, inplace=True)
     df = df[df["Mes"].notna()]
     for col in df.columns:
         if "Costo" in col or col in ["Electrico", "Logistica", "Miscelaneos", "Tramites", "Verificacion", "Herramienta", "Otros", "Capacitores"]:
@@ -38,19 +37,14 @@ def load_data(tipo):
     df["Cuadrilla"] = df.get("Cuadrilla", "Sin asignar").fillna("Sin asignar")
     return df
 
+# UI lateral
 st.sidebar.markdown("## 🧭 Tipo de Proyecto")
 tipo_proyecto = st.sidebar.radio("Selecciona:", ["BT", "MT"])
-
 df = load_data(tipo_proyecto)
 
 moneda = st.sidebar.radio("💱 Moneda:", ["Pesos", "Dólares"])
 factor = 1 if moneda == "Pesos" else 1 / TIPO_CAMBIO
-
-if tipo_proyecto == "MT":
-    aplicar_iva = st.sidebar.checkbox("💸 Aplicar IVA (excepto mano de obra)", value=True)
-    IVA = 1.16 if aplicar_iva else 1.0
-else:
-    IVA = 1.0
+IVA = 1.16 if (tipo_proyecto == "MT" and st.sidebar.checkbox("💸 Aplicar IVA (excepto mano de obra)", True)) else 1.0
 
 # Filtros
 meses_sel = st.sidebar.multiselect("📅 Meses:", ["Todos"] + sorted(df["Mes"].dropna().unique()), default=["Todos"])
@@ -59,12 +53,7 @@ potencias_sel = st.sidebar.multiselect("🔋 Potencia:", ["Todas"] + sorted(df["
 clientes_sel = st.sidebar.multiselect("🏢 Cliente:", ["Todos"] + sorted(df["Nombre del proyecto"].dropna().unique()), default=["Todos"])
 instalaciones_sel = st.sidebar.multiselect("🏗️ Tipo de Instalación:", ["Todas"] + sorted(df.get("Tipo de instalacion", pd.Series()).dropna().unique()), default=["Todas"])
 
-if "Tipo de instalacion" in df.columns:
-    instalaciones = sorted(df["Tipo de instalacion"].dropna().unique())
-    instalaciones_sel = st.sidebar.multiselect("🏗️ Tipo de Instalación:", ["Todas"] + instalaciones, default=["Todas"])
-else:
-    instalaciones_sel = ["Todas"]
-
+# Aplicar filtros
 df_filtrado = df.copy()
 if "Todos" not in meses_sel:
     df_filtrado = df_filtrado[df_filtrado["Mes"].isin(meses_sel)]
@@ -72,18 +61,17 @@ if "Todas" not in cuadrillas_sel:
     df_filtrado = df_filtrado[df_filtrado["Cuadrilla"].isin(cuadrillas_sel)]
 if "Todas" not in potencias_sel:
     df_filtrado = df_filtrado[df_filtrado["Potencia de paneles"].isin(potencias_sel)]
+if "Todas" not in clientes_sel:
+    df_filtrado = df_filtrado[df_filtrado["Nombre del proyecto"].isin(clientes_sel)]
 if "Todas" not in instalaciones_sel and "Tipo de instalacion" in df_filtrado.columns:
     df_filtrado = df_filtrado[df_filtrado["Tipo de instalacion"].isin(instalaciones_sel)]
-if "Todos" not in clientes_sel:
-    df_filtrado = df_filtrado[df_filtrado["Nombre del proyecto"].isin(clientes_sel)]
 
+# Calcular costo total
 if tipo_proyecto == "MT":
     rubros = ["Costo de equipos", "Costo estructura", "Electrico", "Logistica", "Miscelaneos",
               "Tramites", "Verificacion", "Herramienta", "Otros", "Capacitores"]
-    rubros_existentes = [r for r in rubros if r in df_filtrado.columns]
-    total_costo = sum((df_filtrado[r] * IVA).sum() for r in rubros_existentes)
-    if "Costo mano de obra" in df_filtrado.columns:
-        total_costo += df_filtrado["Costo mano de obra"].sum()
+    total_costo = sum((df_filtrado[r] * IVA).sum() for r in rubros if r in df_filtrado.columns)
+    total_costo += df_filtrado.get("Costo mano de obra", pd.Series(0)).sum()
 else:
     total_costo = df_filtrado.get("Costo total", pd.Series(0)).sum()
 
@@ -93,25 +81,25 @@ total_costo *= factor
 col1, col2, col3 = st.columns(3)
 col1.metric("📌 Proyectos", df_filtrado["Nombre del proyecto"].nunique())
 col2.metric(f"💰 Costo Total ({moneda})", f"${total_costo:,.0f}")
-col3.metric("⚡ Potencia Total", f"{df_filtrado['Potencia del sistema'].sum():,.0f} W")
+col3.metric("⚡ Potencia Total", f"{df_filtrado.get('Potencia del sistema', pd.Series(0)).sum():,.0f} W")
 
 col4, col5, col6 = st.columns(3)
 col4.metric("⚙️ Costo Prom. por Watt", f"${df_filtrado.get('COSTO POR WATT', pd.Series()).mean() * factor:,.2f}")
-col5.metric("🔩 Paneles", int(df_filtrado.get("No. de Paneles", pd.Series(0)).sum()))
+col5.metric("🔩 Paneles", int(df_filtrado.get('No. de Paneles', pd.Series(0)).sum()))
 col6.metric("🏗️ Costo Prom. por Panel", f"${df_filtrado.get('Costo total de estructura por panel', pd.Series()).mean() * factor:,.2f}")
 
-# Exportar como CSV (más compatible)
+# Exportar CSV
 st.sidebar.markdown("## 📤 Exportar Datos")
 if st.sidebar.button("📥 Descargar CSV"):
     csv = df_filtrado.to_csv(index=False).encode("utf-8")
     st.download_button("📄 Descargar archivo CSV", csv, file_name="datos_filtrados.csv", mime="text/csv")
 
-# Gráficas
+# Distribución de Costos
 if tipo_proyecto == "MT":
-    rubros_mt = rubros_existentes + ["Costo mano de obra"]
+    rubros_mt = rubros + ["Costo mano de obra"]
     cost_data = pd.DataFrame({
-        "Categoría": [col for col in rubros_mt if col in df_filtrado.columns],
-        "Monto": [(df_filtrado[col] * (1 if col == "Costo mano de obra" else IVA)).sum() * factor for col in rubros_mt if col in df_filtrado.columns]
+        "Categoría": [r for r in rubros_mt if r in df_filtrado.columns],
+        "Monto": [(df_filtrado[r] * (1 if r == "Costo mano de obra" else IVA)).sum() * factor for r in rubros_mt if r in df_filtrado.columns]
     })
 else:
     cost_data = pd.DataFrame({
@@ -126,26 +114,27 @@ else:
 st.subheader("💰 Distribución de Costos")
 st.plotly_chart(px.pie(cost_data, names="Categoría", values="Monto"))
 
-if "Costo total de estructura por panel" in df_filtrado.columns and "Nombre del proyecto" in df_filtrado.columns:
+# Costo de estructura por panel por proyecto
+if "Costo total de estructura por panel" in df_filtrado.columns:
+    st.subheader("🏗️ Costo de Estructura por Panel por Proyecto")
     fig2 = px.bar(df_filtrado, x="Nombre del proyecto",
                   y=df_filtrado["Costo total de estructura por panel"] * factor,
-                  color="Tipo de instalacion" if "Tipo de instalacion" in df_filtrado.columns else None,
-                  color="Tipo de instalacion" if "Tipo de instalacion" in df_filtrado.columns else None,
-                  title="🏗️ Costo de Estructura por Panel por Tipo de Instalación")
-    st.subheader("🏗️ Costo de Estructura por Panel")
+                  color="Tipo de instalacion" if "Tipo de instalacion" in df_filtrado.columns else None)
     st.plotly_chart(fig2)
 
+# Boxplot de costo por watt
 if "COSTO POR WATT" in df_filtrado.columns and "Tipo de instalacion" in df_filtrado.columns:
     fig3 = px.box(df_filtrado, x="Tipo de instalacion",
                   y=df_filtrado["COSTO POR WATT"] * factor,
-                  color="Tipo de instalacion",
-                  title="📦 Costo por Watt por Tipo de Instalación")
+                  color="Tipo de instalacion")
     st.subheader("📦 Costo por Watt por Tipo de Instalación")
     st.plotly_chart(fig3)
 
-# Comparativa por cuadrilla (promedio de costo total)
-if "Cuadrilla" in df_filtrado.columns and "Costo total" in df_filtrado.columns:
-    df_cuad = df_filtrado.groupby("Cuadrilla")["Costo total"].mean().reset_index()
-    df_cuad["Promedio"] = df_cuad["Costo total"] * factor
-    st.subheader("👷 Promedio de Costo Total por Cuadrilla")
-    st.plotly_chart(px.bar(df_cuad, x="Cuadrilla", y="Promedio", title="Promedio de Costo Total por Cuadrilla"))
+# Promedio de Costo Total por Panel por Cuadrilla
+if all(col in df_filtrado.columns for col in ["Cuadrilla", "Costo total", "No. de Paneles"]):
+    df_temp = df_filtrado[df_filtrado["No. de Paneles"] > 0].copy()
+    df_temp["Costo total por panel"] = df_temp["Costo total"] / df_temp["No. de Paneles"]
+    df_cuad = df_temp.groupby("Cuadrilla")["Costo total por panel"].mean().reset_index()
+    df_cuad["Promedio"] = df_cuad["Costo total por panel"] * factor
+    st.subheader("👷 Promedio de Costo Total por Panel por Cuadrilla")
+    st.plotly_chart(px.bar(df_cuad, x="Cuadrilla", y="Promedio", title="Promedio por Cuadrilla"))
