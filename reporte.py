@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import unicodedata
-from io import BytesIO
+from io import StringIO
 
 st.set_page_config(page_title="Dashboard Ecoteko", layout="wide")
 TIPO_CAMBIO = 20.5
@@ -99,12 +99,11 @@ col4.metric("⚙️ Costo Prom. por Watt", f"${df_filtrado.get('COSTO POR WATT',
 col5.metric("🔩 Paneles", int(df_filtrado.get("No. de Paneles", pd.Series(0)).sum()))
 col6.metric("🏗️ Costo Prom. por Panel", f"${df_filtrado.get('Costo total de estructura por panel', pd.Series()).mean() * factor:,.2f}")
 
-# Exportar a Excel
+# Exportar como CSV (más compatible)
 st.sidebar.markdown("## 📤 Exportar Datos")
-if st.sidebar.button("📥 Descargar Excel"):
-    output = BytesIO()
-    df_filtrado.to_excel(output, index=False)
-    st.download_button("📄 Descargar archivo Excel", output.getvalue(), file_name="datos_filtrados.xlsx", mime="application/vnd.ms-excel")
+if st.sidebar.button("📥 Descargar CSV"):
+    csv = df_filtrado.to_csv(index=False).encode("utf-8")
+    st.download_button("📄 Descargar archivo CSV", csv, file_name="datos_filtrados.csv", mime="text/csv")
 
 # Gráficas
 if tipo_proyecto == "MT":
@@ -142,15 +141,9 @@ if "COSTO POR WATT" in df_filtrado.columns and "Tipo de instalacion" in df_filtr
     st.subheader("📦 Costo por Watt por Tipo de Instalación")
     st.plotly_chart(fig3)
 
-# Comparativas adicionales
-if "Cuadrilla" in df_filtrado.columns and "Costo total" in df_filtrado.columns:
-    df_cuad = df_filtrado.groupby("Cuadrilla")["Costo total"].sum().reset_index()
-    df_cuad["Costo total"] *= factor
-    st.subheader("👷 Costo Total por Cuadrilla")
-    st.plotly_chart(px.bar(df_cuad, x="Cuadrilla", y="Costo total", title="Costo por Cuadrilla"))
-
-if "Nombre del proyecto" in df_filtrado.columns and "Costo total" in df_filtrado.columns:
-    df_proj = df_filtrado.groupby("Nombre del proyecto")["Costo total"].sum().reset_index()
-    df_proj["Costo total"] *= factor
-    st.subheader("🏢 Costo Total por Cliente")
-    st.plotly_chart(px.bar(df_proj, x="Nombre del proyecto", y="Costo total", title="Costo por Cliente"))
+# Comparativa por cuadrilla (promedio por panel)
+if "Cuadrilla" in df_filtrado.columns and "Costo total de estructura por panel" in df_filtrado.columns:
+    df_cuad = df_filtrado.groupby("Cuadrilla")["Costo total de estructura por panel"].mean().reset_index()
+    df_cuad["Promedio"] = df_cuad["Costo total de estructura por panel"] * factor
+    st.subheader("👷 Promedio de Costo de Estructura por Panel por Cuadrilla")
+    st.plotly_chart(px.bar(df_cuad, x="Cuadrilla", y="Promedio", title="Promedio por Cuadrilla"))
