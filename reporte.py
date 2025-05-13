@@ -57,6 +57,7 @@ meses_sel = st.sidebar.multiselect("📅 Meses:", ["Todos"] + sorted(df["Mes"].d
 cuadrillas_sel = st.sidebar.multiselect("👷 Cuadrillas:", ["Todas"] + sorted(df["Cuadrilla"].dropna().unique()), default=["Todas"])
 potencias_sel = st.sidebar.multiselect("🔋 Potencia:", ["Todas"] + sorted(df["Potencia de paneles"].dropna().unique()), default=["Todas"])
 clientes_sel = st.sidebar.multiselect("🏢 Cliente:", ["Todos"] + sorted(df["Nombre del proyecto"].dropna().unique()), default=["Todos"])
+instalaciones_sel = st.sidebar.multiselect("🏗️ Tipo de Instalación:", ["Todas"] + sorted(df.get("Tipo de instalacion", pd.Series()).dropna().unique()), default=["Todas"])
 
 if "Tipo de instalacion" in df.columns:
     instalaciones = sorted(df["Tipo de instalacion"].dropna().unique())
@@ -129,7 +130,8 @@ if "Costo total de estructura por panel" in df_filtrado.columns and "Nombre del 
     fig2 = px.bar(df_filtrado, x="Nombre del proyecto",
                   y=df_filtrado["Costo total de estructura por panel"] * factor,
                   color="Tipo de instalacion" if "Tipo de instalacion" in df_filtrado.columns else None,
-                  title="🏗️ Costo de Estructura por Panel")
+                  color="Tipo de instalacion" if "Tipo de instalacion" in df_filtrado.columns else None,
+                  title="🏗️ Costo de Estructura por Panel por Tipo de Instalación")
     st.subheader("🏗️ Costo de Estructura por Panel")
     st.plotly_chart(fig2)
 
@@ -141,9 +143,9 @@ if "COSTO POR WATT" in df_filtrado.columns and "Tipo de instalacion" in df_filtr
     st.subheader("📦 Costo por Watt por Tipo de Instalación")
     st.plotly_chart(fig3)
 
-# Comparativa por cuadrilla (promedio por panel)
-if "Cuadrilla" in df_filtrado.columns and "Costo total de estructura por panel" in df_filtrado.columns:
-    df_cuad = df_filtrado.groupby("Cuadrilla")["Costo total de estructura por panel"].mean().reset_index()
-    df_cuad["Promedio"] = df_cuad["Costo total de estructura por panel"] * factor
-    st.subheader("👷 Promedio de Costo de Estructura por Panel por Cuadrilla")
-    st.plotly_chart(px.bar(df_cuad, x="Cuadrilla", y="Promedio", title="Promedio por Cuadrilla"))
+# Comparativa por cuadrilla (promedio de costo total)
+if "Cuadrilla" in df_filtrado.columns and "Costo total" in df_filtrado.columns:
+    df_cuad = df_filtrado.groupby("Cuadrilla")["Costo total"].mean().reset_index()
+    df_cuad["Promedio"] = df_cuad["Costo total"] * factor
+    st.subheader("👷 Promedio de Costo Total por Cuadrilla")
+    st.plotly_chart(px.bar(df_cuad, x="Cuadrilla", y="Promedio", title="Promedio de Costo Total por Cuadrilla"))
