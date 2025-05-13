@@ -4,7 +4,6 @@ import plotly.express as px
 
 # --- Configuración de página ---
 st.set_page_config(page_title="Dashboard Ecoteko", layout="wide")
-
 TIPO_CAMBIO = 20.5
 
 # --- Estilo visual y logo ---
@@ -31,10 +30,7 @@ def load_data_bt():
     df.columns = df.columns.str.replace("ï»¿", "").str.strip()
     df["Mes"] = df["Mes"].astype(str).str.strip().str.capitalize()
     df = df[df["Mes"].notna() & (df["Mes"] != "nan")]
-    if "Cuadrilla" in df.columns:
-        df["Cuadrilla"] = df["Cuadrilla"].fillna("Sin asignar").astype(str).str.strip()
-    else:
-        df["Cuadrilla"] = "Sin asignar"
+    df["Cuadrilla"] = df.get("Cuadrilla", "Sin asignar").fillna("Sin asignar").astype(str).str.strip()
     for col in ["Costo de equipos", "Costo estructura", "Costo mano de obra"]:
         if col in df.columns:
             df[col] = df[col].fillna(0)
@@ -51,14 +47,13 @@ def load_data_mt():
     for col in df.columns:
         if "Costo" in col or col in ["Electrico", "Logistica", "Miscelaneos", "Tramites", "Verificacion", "Herramienta", "Otros", "Capacitores"]:
             df[col] = pd.to_numeric(df[col], errors="coerce").fillna(0)
-    df["Cuadrilla"] = df["Cuadrilla"].fillna("Sin asignar")
+    df["Cuadrilla"] = df.get("Cuadrilla", "Sin asignar").fillna("Sin asignar")
     return df
 
 # --- Selector BT/MT ---
 st.sidebar.markdown("## 🧭 Tipo de Proyecto")
 tipo_proyecto = st.sidebar.radio("Selecciona:", ["BT", "MT"])
 
-# --- Carga de datos según tipo ---
 if tipo_proyecto == "BT":
     df = load_data_bt()
     factor = 1 if st.sidebar.radio("💱 Moneda:", ["Pesos", "Dólares"]) == "Pesos" else 1 / TIPO_CAMBIO
@@ -72,12 +67,13 @@ else:
 meses_sel = st.sidebar.multiselect("📅 Meses:", ["Todos"] + sorted(df["Mes"].dropna().unique()), default=["Todos"])
 cuadrillas_sel = st.sidebar.multiselect("👷 Cuadrillas:", ["Todas"] + sorted(df["Cuadrilla"].dropna().unique()), default=["Todas"])
 potencias_sel = st.sidebar.multiselect("🔋 Potencia:", ["Todas"] + sorted(df["Potencia de paneles"].dropna().unique()), default=["Todas"])
+clientes_sel = st.sidebar.multiselect("🏢 Cliente:", ["Todos"] + sorted(df["Nombre del proyecto"].dropna().unique()), default=["Todos"])
+
 if "Tipo de instalacion" in df.columns:
     instalaciones = sorted(df["Tipo de instalacion"].dropna().unique())
     instalaciones_sel = st.sidebar.multiselect("🏗️ Tipo de Instalación:", ["Todas"] + instalaciones, default=["Todas"])
-    if "Todas" not in instalaciones_sel:
-        df_filtrado = df_filtrado[df_filtrado["Tipo de instalacion"].isin(instalaciones_sel)]
-clientes_sel = st.sidebar.multiselect("🏢 Cliente:", ["Todos"] + sorted(df["Nombre del proyecto"].dropna().unique()), default=["Todos"])
+else:
+    instalaciones_sel = ["Todas"]
 
 df_filtrado = df.copy()
 if "Todos" not in meses_sel:
@@ -86,6 +82,8 @@ if "Todas" not in cuadrillas_sel:
     df_filtrado = df_filtrado[df_filtrado["Cuadrilla"].isin(cuadrillas_sel)]
 if "Todas" not in potencias_sel:
     df_filtrado = df_filtrado[df_filtrado["Potencia de paneles"].isin(potencias_sel)]
+if "Todas" not in instalaciones_sel and "Tipo de instalacion" in df_filtrado.columns:
+    df_filtrado = df_filtrado[df_filtrado["Tipo de instalacion"].isin(instalaciones_sel)]
 if "Todos" not in clientes_sel:
     df_filtrado = df_filtrado[df_filtrado["Nombre del proyecto"].isin(clientes_sel)]
 
@@ -93,7 +91,10 @@ if "Todos" not in clientes_sel:
 if tipo_proyecto == "MT":
     rubros = ["Costo de equipos", "Costo estructura", "Electrico", "Logistica", "Miscelaneos",
               "Tramites", "Verificacion", "Herramienta", "Otros", "Capacitores"]
-    total_costo = sum(df_filtrado[r] * IVA for r in rubros) + df_filtrado["Costo mano de obra"].sum()
+    rubros_existentes = [r for r in rubros if r in df_filtrado.columns]
+    total_costo = sum(df_filtrado[r] * IVA for r in rubros_existentes)
+    if "Costo mano de obra" in df_filtrado.columns:
+        total_costo += df_filtrado["Costo mano de obra"].sum()
 else:
     total_costo = df_filtrado["Costo total"].sum() * factor
 
@@ -109,18 +110,18 @@ col6.metric("🏗️ Costo Prom. por Panel", f"${df_filtrado['Costo total de est
 
 # --- Gráficas ---
 if tipo_proyecto == "MT":
-    rubros_mt = rubros + ["Costo mano de obra"]
+    rubros_mt = rubros_existentes + ["Costo mano de obra"]
     cost_data = pd.DataFrame({
         "Categoría": rubros_mt,
-        "Monto": [(df_filtrado[col] * (1 if col == "Costo mano de obra" else IVA)).sum() for col in rubros_mt]
+        "Monto": [(df_filtrado[col] * (1 if col == "Costo mano de obra" else IVA)).sum() for col in rubros_mt if col in df_filtrado.columns]
     })
 else:
     cost_data = pd.DataFrame({
         "Categoría": ["Equipos", "Estructura", "Mano de Obra"],
         "Monto": [
-            df_filtrado["Costo de equipos"].sum() * factor,
-            df_filtrado["Costo estructura"].sum() * factor,
-            df_filtrado["Costo mano de obra"].sum() * factor
+            df_filtrado.get("Costo de equipos", pd.Series(0)).sum() * factor,
+            df_filtrado.get("Costo estructura", pd.Series(0)).sum() * factor,
+            df_filtrado.get("Costo mano de obra", pd.Series(0)).sum() * factor
         ]
     })
 
@@ -128,7 +129,6 @@ fig1 = px.pie(cost_data, names="Categoría", values="Monto", title="Distribució
 st.subheader("💰 Distribución de Costos")
 st.plotly_chart(fig1)
 
-# Gráficas adicionales
 if "Costo total de estructura por panel" in df_filtrado.columns:
     fig2 = px.bar(df_filtrado, x="Nombre del proyecto", y=df_filtrado["Costo total de estructura por panel"] * factor,
                   color="Tipo de instalacion", title="Costo de Estructura por Panel")
