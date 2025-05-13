@@ -27,7 +27,7 @@ def load_data_bt():
 
 @st.cache_data
 def load_data_mt():
-    url2:"https://raw.githubusercontent.com/Arrazatea/dashboard-ecoteko/refs/heads/main/ReporteAbril25MT.csv"
+    url2 = "https://raw.githubusercontent.com/Arrazatea/dashboard-ecoteko/refs/heads/main/ReporteAbril25MT.csv"
     df = pd.read_csv(url2, encoding="latin1")
     df.columns = df.columns.str.replace("ï»¿", "").str.strip()
     df.rename(columns={"Tipo de instalaciÃ³n": "Tipo de instalacion"}, inplace=True)
@@ -37,6 +37,7 @@ def load_data_mt():
             df[col] = pd.to_numeric(df[col], errors="coerce").fillna(0)
     df["Cuadrilla"] = df["Cuadrilla"].fillna("Sin asignar")
     return df
+
 
 # --- Interfaz de usuario ---
 st.sidebar.markdown("## 🧭 Seleccionar tipo de proyecto")
