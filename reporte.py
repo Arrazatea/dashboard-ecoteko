@@ -33,7 +33,7 @@ if tipo_proyecto == "BT":
     
     @st.cache_data
     def load_data():
-        url = "https://raw.githubusercontent.com/Arrazatea/dashboard-ecoteko/refs/heads/main/ReporteAbril25.csv"
+        url = "https://raw.githubusercontent.com/Arrazatea/dashboard-ecoteko/refs/heads/main/ReporteAbril25BT.csv"
         df = pd.read_csv(url, encoding="latin1")
         df.rename(columns={"Tipo de instalaciÃ³n": "Tipo de instalacion"}, inplace=True)
         df.columns = df.columns.str.replace("ï»¿", "").str.strip()
@@ -63,11 +63,7 @@ if tipo_proyecto == "BT":
         .logo-container img { background-color: rgba(255, 255, 255, 0.1); padding: 15px; border-radius: 15px; }
     </style>
     """, unsafe_allow_html=True)
-    
-    logo_url = "https://raw.githubusercontent.com/Arrazatea/dashboard-ecoteko/main/LOGO.png"
-    st.markdown(f'<div class="logo-container"><img src="{logo_url}" width="400"></div>', unsafe_allow_html=True)
-    st.markdown("# ⚡ Dashboard de Instalaciones Residenciales - Ecoteko")
-    
+
     st.sidebar.title("⚙️ Filtros")
     moneda = st.sidebar.radio("💱 Seleccionar Moneda:", ["Pesos", "Dólares"])
     meses_seleccionados = st.sidebar.multiselect("📅 Meses:", ["Todos"] + sorted(df["Mes"].unique()), default=["Todos"])
@@ -176,7 +172,7 @@ elif tipo_proyecto == "MT":
     
     @st.cache_data
     def load_data(tipo):
-        url = f"https://raw.githubusercontent.com/Arrazatea/dashboard-ecoteko/refs/heads/main/ReporteAbril25{tipo}.csv"
+        url = f"https://raw.githubusercontent.com/Arrazatea/dashboard-ecoteko/refs/heads/main/ReporteAbril25MT.csv"
         df = pd.read_csv(url, encoding="latin1")
         df = normalize_columns(df)
         df = df[df["Mes"].notna()]
