@@ -1,8 +1,3 @@
-st.set_page_config(page_title="Dashboard Ecoteko", layout="wide")
-
-# ===========================
-# DASHBOARD ECOTEKO COMBINADO BT + MT
-# ===========================
 
 import streamlit as st
 import pandas as pd
