@@ -8,7 +8,7 @@ st.set_page_config(page_title="Dashboard Ecoteko", layout="wide")
 TIPO_CAMBIO = 20.5
 
 # --- Estilo visual y logo ---
-st.markdown(\"""
+st.markdown("""
 <style>
     body, .main { background-color: #101820 !important; color: #F2AA4C !important; }
     .css-1d391kg, .stSidebar { background-color: #1A1A1A !important; }
@@ -16,7 +16,7 @@ st.markdown(\"""
     .logo-container { display: flex; justify-content: center; margin-bottom: 20px; }
     .logo-container img { background-color: rgba(255, 255, 255, 0.1); padding: 15px; border-radius: 15px; }
 </style>
-\""", unsafe_allow_html=True)
+""", unsafe_allow_html=True)
 
 logo_url = "https://raw.githubusercontent.com/Arrazatea/dashboard-ecoteko/main/LOGO.png"
 st.markdown(f'<div class="logo-container"><img src="{logo_url}" width="400"></div>', unsafe_allow_html=True)
@@ -126,7 +126,7 @@ fig1 = px.pie(cost_data, names="Categoría", values="Monto", title="Distribució
 st.subheader("💰 Distribución de Costos")
 st.plotly_chart(fig1)
 
-# Gráficas adicionales (solo si BT o columnas disponibles)
+# Gráficas adicionales
 if "Costo total de estructura por panel" in df_filtrado.columns:
     fig2 = px.bar(df_filtrado, x="Nombre del proyecto", y=df_filtrado["Costo total de estructura por panel"] * factor,
                   color="Tipo de instalacion", title="Costo de Estructura por Panel")
