@@ -33,7 +33,7 @@ def load_data(tipo):
     df.rename(columns={"Tipo de instalacion": "Tipo de instalacion"}, inplace=True)
     df = df[df["Mes"].notna()]
     for col in df.columns:
-        if "Costo" in col or col in ["Electrico", "Logistica", "Logistica", "Miscelaneos", "Tramites", "Verificacion", "Herramienta", "Otros", "Capacitores"]:
+        if "Costo" in col or col in ["Electrico", "Logistica", "Miscelaneos", "Tramites", "Verificacion", "Herramienta", "Otros", "Capacitores"]:
             df[col] = pd.to_numeric(df[col], errors="coerce").fillna(0)
     df["Cuadrilla"] = df.get("Cuadrilla", "Sin asignar").fillna("Sin asignar")
     return df
@@ -123,15 +123,14 @@ else:
         ]
     })
 
-fig1 = px.pie(cost_data, names="Categoría", values="Monto", title="Distribución de Costos")
 st.subheader("💰 Distribución de Costos")
-st.plotly_chart(fig1)
+st.plotly_chart(px.pie(cost_data, names="Categoría", values="Monto"))
 
 if "Costo total de estructura por panel" in df_filtrado.columns and "Nombre del proyecto" in df_filtrado.columns:
     fig2 = px.bar(df_filtrado, x="Nombre del proyecto",
                   y=df_filtrado["Costo total de estructura por panel"] * factor,
                   color="Tipo de instalacion" if "Tipo de instalacion" in df_filtrado.columns else None,
-                  title="Costo de Estructura por Panel")
+                  title="🏗️ Costo de Estructura por Panel")
     st.subheader("🏗️ Costo de Estructura por Panel")
     st.plotly_chart(fig2)
 
@@ -139,6 +138,19 @@ if "COSTO POR WATT" in df_filtrado.columns and "Tipo de instalacion" in df_filtr
     fig3 = px.box(df_filtrado, x="Tipo de instalacion",
                   y=df_filtrado["COSTO POR WATT"] * factor,
                   color="Tipo de instalacion",
-                  title="Variabilidad del Costo por Watt")
+                  title="📦 Costo por Watt por Tipo de Instalación")
     st.subheader("📦 Costo por Watt por Tipo de Instalación")
     st.plotly_chart(fig3)
+
+# Comparativas adicionales
+if "Cuadrilla" in df_filtrado.columns and "Costo total" in df_filtrado.columns:
+    df_cuad = df_filtrado.groupby("Cuadrilla")["Costo total"].sum().reset_index()
+    df_cuad["Costo total"] *= factor
+    st.subheader("👷 Costo Total por Cuadrilla")
+    st.plotly_chart(px.bar(df_cuad, x="Cuadrilla", y="Costo total", title="Costo por Cuadrilla"))
+
+if "Nombre del proyecto" in df_filtrado.columns and "Costo total" in df_filtrado.columns:
+    df_proj = df_filtrado.groupby("Nombre del proyecto")["Costo total"].sum().reset_index()
+    df_proj["Costo total"] *= factor
+    st.subheader("🏢 Costo Total por Cliente")
+    st.plotly_chart(px.bar(df_proj, x="Nombre del proyecto", y="Costo total", title="Costo por Cliente"))
