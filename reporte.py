@@ -92,7 +92,7 @@ if tipo_proyecto == "MT":
     rubros = ["Costo de equipos", "Costo estructura", "Electrico", "Logistica", "Miscelaneos",
               "Tramites", "Verificacion", "Herramienta", "Otros", "Capacitores"]
     rubros_existentes = [r for r in rubros if r in df_filtrado.columns]
-    total_costo = sum(df_filtrado[r] * IVA for r in rubros_existentes)
+    total_costo = sum((df_filtrado[r] * IVA).sum() for r in rubros_existentes)
     if "Costo mano de obra" in df_filtrado.columns:
         total_costo += df_filtrado["Costo mano de obra"].sum()
 else:
