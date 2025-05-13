@@ -5,7 +5,6 @@ import plotly.express as px
 st.set_page_config(page_title="Dashboard Ecoteko", layout="wide")
 TIPO_CAMBIO = 20.5
 
-# Estilo y logo
 st.markdown("""
 <style>
     body, .main { background-color: #101820 !important; color: #F2AA4C !important; }
@@ -20,22 +19,8 @@ st.markdown(f'<div class="logo-container"><img src="https://raw.githubuserconten
 st.markdown("# ⚡ Dashboard de Instalaciones Residenciales - Ecoteko")
 
 @st.cache_data
-def load_data_bt():
-    url = "https://raw.githubusercontent.com/Arrazatea/dashboard-ecoteko/refs/heads/main/ReporteAbril25BT.csv"
-    df = pd.read_csv(url, encoding="latin1")
-    df.rename(columns={"Tipo de instalaciÃ³n": "Tipo de instalacion"}, inplace=True)
-    df.columns = df.columns.str.replace("ï»¿", "").str.strip()
-    df["Mes"] = df["Mes"].astype(str).str.strip().str.capitalize()
-    df = df[df["Mes"].notna() & (df["Mes"] != "nan")]
-    df["Cuadrilla"] = df.get("Cuadrilla", "Sin asignar").fillna("Sin asignar").astype(str).str.strip()
-    for col in ["Costo de equipos", "Costo estructura", "Costo mano de obra"]:
-        if col in df.columns:
-            df[col] = df[col].fillna(0)
-    return df
-
-@st.cache_data
-def load_data_mt():
-    url = "https://raw.githubusercontent.com/Arrazatea/dashboard-ecoteko/refs/heads/main/ReporteAbril25MT.csv"
+def load_data(tipo):
+    url = f"https://raw.githubusercontent.com/Arrazatea/dashboard-ecoteko/refs/heads/main/ReporteAbril25{tipo}.csv"
     df = pd.read_csv(url, encoding="latin1")
     df.columns = df.columns.str.normalize('NFKD').str.encode('ascii', errors='ignore').str.decode('utf-8')
     df.columns = df.columns.str.replace("ï»¿", "").str.strip()
@@ -47,18 +32,19 @@ def load_data_mt():
     df["Cuadrilla"] = df.get("Cuadrilla", "Sin asignar").fillna("Sin asignar")
     return df
 
-# Selector
 st.sidebar.markdown("## 🧭 Tipo de Proyecto")
 tipo_proyecto = st.sidebar.radio("Selecciona:", ["BT", "MT"])
 
-if tipo_proyecto == "BT":
-    df = load_data_bt()
-    factor = 1 if st.sidebar.radio("💱 Moneda:", ["Pesos", "Dólares"]) == "Pesos" else 1 / TIPO_CAMBIO
-else:
-    df = load_data_mt()
+df = load_data(tipo_proyecto)
+
+moneda = st.sidebar.radio("💱 Moneda:", ["Pesos", "Dólares"])
+factor = 1 if moneda == "Pesos" else 1 / TIPO_CAMBIO
+
+if tipo_proyecto == "MT":
     aplicar_iva = st.sidebar.checkbox("💸 Aplicar IVA (excepto mano de obra)", value=True)
     IVA = 1.16 if aplicar_iva else 1.0
-    factor = 1
+else:
+    IVA = 1.0
 
 # Filtros
 meses_sel = st.sidebar.multiselect("📅 Meses:", ["Todos"] + sorted(df["Mes"].dropna().unique()), default=["Todos"])
@@ -84,7 +70,6 @@ if "Todas" not in instalaciones_sel and "Tipo de instalacion" in df_filtrado.col
 if "Todos" not in clientes_sel:
     df_filtrado = df_filtrado[df_filtrado["Nombre del proyecto"].isin(clientes_sel)]
 
-# Métricas
 if tipo_proyecto == "MT":
     rubros = ["Costo de equipos", "Costo estructura", "Electrico", "Logistica", "Miscelaneos",
               "Tramites", "Verificacion", "Herramienta", "Otros", "Capacitores"]
@@ -93,11 +78,13 @@ if tipo_proyecto == "MT":
     if "Costo mano de obra" in df_filtrado.columns:
         total_costo += df_filtrado["Costo mano de obra"].sum()
 else:
-    total_costo = df_filtrado.get("Costo total", pd.Series(0)).sum() * factor
+    total_costo = df_filtrado.get("Costo total", pd.Series(0)).sum()
+
+total_costo *= factor
 
 col1, col2, col3 = st.columns(3)
 col1.metric("📌 Proyectos", df_filtrado["Nombre del proyecto"].nunique())
-col2.metric("💰 Costo Total", f"${total_costo:,.0f}")
+col2.metric(f"💰 Costo Total ({moneda})", f"${total_costo:,.0f}")
 col3.metric("⚡ Potencia Total", f"{df_filtrado['Potencia del sistema'].sum():,.0f} W")
 
 col4, col5, col6 = st.columns(3)
@@ -105,12 +92,11 @@ col4.metric("⚙️ Costo Prom. por Watt", f"${df_filtrado.get('COSTO POR WATT',
 col5.metric("🔩 Paneles", int(df_filtrado.get("No. de Paneles", pd.Series(0)).sum()))
 col6.metric("🏗️ Costo Prom. por Panel", f"${df_filtrado.get('Costo total de estructura por panel', pd.Series()).mean() * factor:,.2f}")
 
-# Gráficas
 if tipo_proyecto == "MT":
     rubros_mt = rubros_existentes + ["Costo mano de obra"]
     cost_data = pd.DataFrame({
         "Categoría": [col for col in rubros_mt if col in df_filtrado.columns],
-        "Monto": [(df_filtrado[col] * (1 if col == "Costo mano de obra" else IVA)).sum() for col in rubros_mt if col in df_filtrado.columns]
+        "Monto": [(df_filtrado[col] * (1 if col == "Costo mano de obra" else IVA)).sum() * factor for col in rubros_mt if col in df_filtrado.columns]
     })
 else:
     cost_data = pd.DataFrame({
