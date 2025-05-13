@@ -1,9 +1,16 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+import unicodedata
+from io import BytesIO
 
 st.set_page_config(page_title="Dashboard Ecoteko", layout="wide")
 TIPO_CAMBIO = 20.5
+
+def normalize_columns(df):
+    df.columns = df.columns.str.strip()
+    df.columns = [unicodedata.normalize('NFKD', col).encode('ascii', 'ignore').decode('utf-8') for col in df.columns]
+    return df
 
 st.markdown("""
 <style>
@@ -22,12 +29,11 @@ st.markdown("# ⚡ Dashboard de Instalaciones Residenciales - Ecoteko")
 def load_data(tipo):
     url = f"https://raw.githubusercontent.com/Arrazatea/dashboard-ecoteko/refs/heads/main/ReporteAbril25{tipo}.csv"
     df = pd.read_csv(url, encoding="latin1")
-    df.columns = df.columns.str.normalize('NFKD').str.encode('ascii', errors='ignore').str.decode('utf-8')
-    df.columns = df.columns.str.replace("ï»¿", "").str.strip()
+    df = normalize_columns(df)
     df.rename(columns={"Tipo de instalacion": "Tipo de instalacion"}, inplace=True)
     df = df[df["Mes"].notna()]
     for col in df.columns:
-        if "Costo" in col or col in ["Electrico", "Logistica", "Miscelaneos", "Tramites", "Verificacion", "Herramienta", "Otros", "Capacitores"]:
+        if "Costo" in col or col in ["Electrico", "Logistica", "Logistica", "Miscelaneos", "Tramites", "Verificacion", "Herramienta", "Otros", "Capacitores"]:
             df[col] = pd.to_numeric(df[col], errors="coerce").fillna(0)
     df["Cuadrilla"] = df.get("Cuadrilla", "Sin asignar").fillna("Sin asignar")
     return df
@@ -82,6 +88,7 @@ else:
 
 total_costo *= factor
 
+# Métricas
 col1, col2, col3 = st.columns(3)
 col1.metric("📌 Proyectos", df_filtrado["Nombre del proyecto"].nunique())
 col2.metric(f"💰 Costo Total ({moneda})", f"${total_costo:,.0f}")
@@ -92,6 +99,14 @@ col4.metric("⚙️ Costo Prom. por Watt", f"${df_filtrado.get('COSTO POR WATT',
 col5.metric("🔩 Paneles", int(df_filtrado.get("No. de Paneles", pd.Series(0)).sum()))
 col6.metric("🏗️ Costo Prom. por Panel", f"${df_filtrado.get('Costo total de estructura por panel', pd.Series()).mean() * factor:,.2f}")
 
+# Exportar a Excel
+st.sidebar.markdown("## 📤 Exportar Datos")
+if st.sidebar.button("📥 Descargar Excel"):
+    output = BytesIO()
+    df_filtrado.to_excel(output, index=False)
+    st.download_button("📄 Descargar archivo Excel", output.getvalue(), file_name="datos_filtrados.xlsx", mime="application/vnd.ms-excel")
+
+# Gráficas
 if tipo_proyecto == "MT":
     rubros_mt = rubros_existentes + ["Costo mano de obra"]
     cost_data = pd.DataFrame({
