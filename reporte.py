@@ -2,11 +2,10 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 
-# --- Configuración de página ---
 st.set_page_config(page_title="Dashboard Ecoteko", layout="wide")
 TIPO_CAMBIO = 20.5
 
-# --- Estilo visual y logo ---
+# Estilo y logo
 st.markdown("""
 <style>
     body, .main { background-color: #101820 !important; color: #F2AA4C !important; }
@@ -17,11 +16,9 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-logo_url = "https://raw.githubusercontent.com/Arrazatea/dashboard-ecoteko/main/LOGO.png"
-st.markdown(f'<div class="logo-container"><img src="{logo_url}" width="400"></div>', unsafe_allow_html=True)
+st.markdown(f'<div class="logo-container"><img src="https://raw.githubusercontent.com/Arrazatea/dashboard-ecoteko/main/LOGO.png" width="400"></div>', unsafe_allow_html=True)
 st.markdown("# ⚡ Dashboard de Instalaciones Residenciales - Ecoteko")
 
-# --- Funciones de carga de datos ---
 @st.cache_data
 def load_data_bt():
     url = "https://raw.githubusercontent.com/Arrazatea/dashboard-ecoteko/refs/heads/main/ReporteAbril25BT.csv"
@@ -50,7 +47,7 @@ def load_data_mt():
     df["Cuadrilla"] = df.get("Cuadrilla", "Sin asignar").fillna("Sin asignar")
     return df
 
-# --- Selector BT/MT ---
+# Selector
 st.sidebar.markdown("## 🧭 Tipo de Proyecto")
 tipo_proyecto = st.sidebar.radio("Selecciona:", ["BT", "MT"])
 
@@ -63,7 +60,7 @@ else:
     IVA = 1.16 if aplicar_iva else 1.0
     factor = 1
 
-# --- Filtros comunes ---
+# Filtros
 meses_sel = st.sidebar.multiselect("📅 Meses:", ["Todos"] + sorted(df["Mes"].dropna().unique()), default=["Todos"])
 cuadrillas_sel = st.sidebar.multiselect("👷 Cuadrillas:", ["Todas"] + sorted(df["Cuadrilla"].dropna().unique()), default=["Todas"])
 potencias_sel = st.sidebar.multiselect("🔋 Potencia:", ["Todas"] + sorted(df["Potencia de paneles"].dropna().unique()), default=["Todas"])
@@ -87,7 +84,7 @@ if "Todas" not in instalaciones_sel and "Tipo de instalacion" in df_filtrado.col
 if "Todos" not in clientes_sel:
     df_filtrado = df_filtrado[df_filtrado["Nombre del proyecto"].isin(clientes_sel)]
 
-# --- Cálculo de métricas ---
+# Métricas
 if tipo_proyecto == "MT":
     rubros = ["Costo de equipos", "Costo estructura", "Electrico", "Logistica", "Miscelaneos",
               "Tramites", "Verificacion", "Herramienta", "Otros", "Capacitores"]
@@ -96,7 +93,7 @@ if tipo_proyecto == "MT":
     if "Costo mano de obra" in df_filtrado.columns:
         total_costo += df_filtrado["Costo mano de obra"].sum()
 else:
-    total_costo = df_filtrado["Costo total"].sum() * factor
+    total_costo = df_filtrado.get("Costo total", pd.Series(0)).sum() * factor
 
 col1, col2, col3 = st.columns(3)
 col1.metric("📌 Proyectos", df_filtrado["Nombre del proyecto"].nunique())
@@ -104,15 +101,15 @@ col2.metric("💰 Costo Total", f"${total_costo:,.0f}")
 col3.metric("⚡ Potencia Total", f"{df_filtrado['Potencia del sistema'].sum():,.0f} W")
 
 col4, col5, col6 = st.columns(3)
-col4.metric("⚙️ Costo Prom. por Watt", f"${df_filtrado['COSTO POR WATT'].mean() * factor:,.2f}")
-col5.metric("🔩 Paneles", int(df_filtrado["No. de Paneles"].sum()))
-col6.metric("🏗️ Costo Prom. por Panel", f"${df_filtrado['Costo total de estructura por panel'].mean() * factor:,.2f}")
+col4.metric("⚙️ Costo Prom. por Watt", f"${df_filtrado.get('COSTO POR WATT', pd.Series()).mean() * factor:,.2f}")
+col5.metric("🔩 Paneles", int(df_filtrado.get("No. de Paneles", pd.Series(0)).sum()))
+col6.metric("🏗️ Costo Prom. por Panel", f"${df_filtrado.get('Costo total de estructura por panel', pd.Series()).mean() * factor:,.2f}")
 
-# --- Gráficas ---
+# Gráficas
 if tipo_proyecto == "MT":
     rubros_mt = rubros_existentes + ["Costo mano de obra"]
     cost_data = pd.DataFrame({
-        "Categoría": rubros_mt,
+        "Categoría": [col for col in rubros_mt if col in df_filtrado.columns],
         "Monto": [(df_filtrado[col] * (1 if col == "Costo mano de obra" else IVA)).sum() for col in rubros_mt if col in df_filtrado.columns]
     })
 else:
@@ -129,14 +126,18 @@ fig1 = px.pie(cost_data, names="Categoría", values="Monto", title="Distribució
 st.subheader("💰 Distribución de Costos")
 st.plotly_chart(fig1)
 
-if "Costo total de estructura por panel" in df_filtrado.columns:
-    fig2 = px.bar(df_filtrado, x="Nombre del proyecto", y=df_filtrado["Costo total de estructura por panel"] * factor,
-                  color="Tipo de instalacion", title="Costo de Estructura por Panel")
+if "Costo total de estructura por panel" in df_filtrado.columns and "Nombre del proyecto" in df_filtrado.columns:
+    fig2 = px.bar(df_filtrado, x="Nombre del proyecto",
+                  y=df_filtrado["Costo total de estructura por panel"] * factor,
+                  color="Tipo de instalacion" if "Tipo de instalacion" in df_filtrado.columns else None,
+                  title="Costo de Estructura por Panel")
     st.subheader("🏗️ Costo de Estructura por Panel")
     st.plotly_chart(fig2)
 
-if "COSTO POR WATT" in df_filtrado.columns:
-    fig3 = px.box(df_filtrado, x="Tipo de instalacion", y=df_filtrado["COSTO POR WATT"] * factor,
-                  color="Tipo de instalacion", title="Variabilidad del Costo por Watt")
+if "COSTO POR WATT" in df_filtrado.columns and "Tipo de instalacion" in df_filtrado.columns:
+    fig3 = px.box(df_filtrado, x="Tipo de instalacion",
+                  y=df_filtrado["COSTO POR WATT"] * factor,
+                  color="Tipo de instalacion",
+                  title="Variabilidad del Costo por Watt")
     st.subheader("📦 Costo por Watt por Tipo de Instalación")
     st.plotly_chart(fig3)
