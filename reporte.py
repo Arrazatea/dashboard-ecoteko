@@ -1,10 +1,15 @@
+st.set_page_config(page_title="Dashboard Ecoteko", layout="wide")
+
+# ===========================
+# DASHBOARD ECOTEKO COMBINADO BT + MT
+# ===========================
+
 import streamlit as st
 import pandas as pd
 import plotly.express as px
 import unicodedata
 from io import StringIO
 
-st.set_page_config(page_title="Dashboard Ecoteko", layout="wide")
 TIPO_CAMBIO = 20.5
 
 # Estilos
@@ -30,7 +35,6 @@ if tipo_proyecto == "BT":
     import pandas as pd
     import plotly.express as px
     
-    st.set_page_config(page_title="Dashboard Ecoteko", layout="wide")
     
     @st.cache_data
     def load_data():
@@ -155,7 +159,6 @@ elif tipo_proyecto == "MT":
     import unicodedata
     from io import StringIO
     
-    st.set_page_config(page_title="Dashboard Ecoteko", layout="wide")
     TIPO_CAMBIO = 20.5
     
     def normalize_columns(df):
