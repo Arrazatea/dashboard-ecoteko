@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-import unicodedata
 
 st.set_page_config(page_title="Dashboard Ecoteko", layout="wide")
 
@@ -31,7 +30,6 @@ def load_data_bt():
     url = "https://raw.githubusercontent.com/Arrazatea/dashboard-ecoteko/refs/heads/main/ReporteJunio25.csv"
     df = pd.read_csv(url, encoding="latin1")
     df.columns = df.columns.str.replace("ï»¿", "").str.strip()
-    df.rename(columns=lambda c: unicodedata.normalize('NFKD', c).encode('ascii', 'ignore').decode('utf-8'), inplace=True)
     df["Mes"] = df["Mes"].astype(str).str.strip().str.capitalize()
     df = df[df["Mes"].notna() & (df["Mes"] != "nan")]
     df["Cuadrilla"] = df.get("Cuadrilla", "Sin asignar").fillna("Sin asignar")
@@ -45,7 +43,6 @@ def load_data_mt():
     url = "https://raw.githubusercontent.com/Arrazatea/dashboard-ecoteko/refs/heads/main/ReporteAbril25MT.csv"
     df = pd.read_csv(url, encoding="latin1")
     df.columns = df.columns.str.strip()
-    df.columns = [unicodedata.normalize('NFKD', c).encode('ascii', 'ignore').decode('utf-8') for c in df.columns]
     df = df[df["Mes"].notna()]
     for col in df.columns:
         if "Costo" in col or col in ["Electrico", "Logistica", "Miscelaneos", "Tramites", "Verificacion", "Herramienta", "Otros", "Capacitores"]:
@@ -133,7 +130,7 @@ if "Costo total de estructura por panel" in df_filtrado.columns:
     st.subheader("🏗️ Costo de Estructura por Panel por Proyecto")
     fig2 = px.bar(df_filtrado, x="Nombre del proyecto",
                   y=df_filtrado["Costo total de estructura por panel"] * factor,
-                  color="Tipo de instalacion" if "Tipo de instalacion" in df_filtrado.columns else None)
+                  color="Tipo de instalacion")
     st.plotly_chart(fig2)
 
 # Boxplot de costo por watt por tipo de instalación
