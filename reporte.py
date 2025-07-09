@@ -28,7 +28,7 @@ tipo_proyecto = st.sidebar.radio("🔘 Selecciona el tipo de proyecto:", ["BT", 
 # -------------------
 # FUNCIONES
 # -------------------
-@st.cache_data
+#@st.cache_data
 def load_data_bt():
     url = "https://raw.githubusercontent.com/Arrazatea/dashboard-ecoteko/refs/heads/main/ReporteJunio25.csv"
     df = pd.read_csv(url, encoding="latin1")
