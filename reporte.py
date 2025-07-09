@@ -40,7 +40,7 @@ def load_data_bt():
 
 @st.cache_data
 def load_data_mt():
-    url = "https://raw.githubusercontent.com/Arrazatea/dashboard-ecoteko/refs/heads/main/ReporteAbril25MT.csv"
+    url = "https://raw.githubusercontent.com/Arrazatea/dashboard-ecoteko/refs/heads/main/ReporteJunio25MT.csv"
     df = pd.read_csv(url, encoding="latin1")
     df.columns = df.columns.str.strip()
     df = df[df["Mes"].notna()]
