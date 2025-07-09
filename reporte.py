@@ -1,4 +1,3 @@
-
 import streamlit as st
 import pandas as pd
 import plotly.express as px
@@ -22,13 +21,12 @@ st.markdown("""
 st.markdown(f'<div class="logo-container"><img src="https://raw.githubusercontent.com/Arrazatea/dashboard-ecoteko/main/LOGO.png" width="400"></div>', unsafe_allow_html=True)
 st.markdown("# ⚡ Dashboard de Instalaciones Residenciales - Ecoteko")
 
-# Selector de proyecto
 tipo_proyecto = st.sidebar.radio("🔘 Selecciona el tipo de proyecto:", ["BT", "MT"])
 
 # -------------------
 # FUNCIONES
 # -------------------
-#@st.cache_data
+@st.cache_data
 def load_data_bt():
     url = "https://raw.githubusercontent.com/Arrazatea/dashboard-ecoteko/refs/heads/main/ReporteJunio25.csv"
     df = pd.read_csv(url, encoding="latin1")
@@ -64,7 +62,6 @@ moneda = st.sidebar.radio("💱 Moneda:", ["Pesos", "Dólares"])
 factor = 1 if moneda == "Pesos" else 1 / TIPO_CAMBIO
 IVA = 1.16 if tipo_proyecto == "MT" and st.sidebar.checkbox("💸 Aplicar IVA (excepto mano de obra)", True) else 1.0
 
-# Filtros
 meses = ["Todos"] + sorted(df["Mes"].dropna().unique())
 cuadrillas = ["Todas"] + sorted(df["Cuadrilla"].dropna().unique())
 potencias = ["Todas"] + sorted(df["Potencia de paneles"].dropna().unique())
@@ -131,7 +128,7 @@ else:
 st.subheader("💰 Distribución de Costos")
 st.plotly_chart(px.pie(cost_data, names="Categoría", values="Monto"))
 
-# Gráfica por proyecto
+# Costo estructura por panel por proyecto
 if "Costo total de estructura por panel" in df_filtrado.columns:
     st.subheader("🏗️ Costo de Estructura por Panel por Proyecto")
     fig2 = px.bar(df_filtrado, x="Nombre del proyecto",
@@ -139,12 +136,12 @@ if "Costo total de estructura por panel" in df_filtrado.columns:
                   color="Tipo de instalacion" if "Tipo de instalacion" in df_filtrado.columns else None)
     st.plotly_chart(fig2)
 
-# Boxplot por tipo de instalación
+# Boxplot de costo por watt por tipo de instalación
 if "COSTO POR WATT" in df_filtrado.columns and "Tipo de instalacion" in df_filtrado.columns:
+    st.subheader("📦 Costo por Watt por Tipo de Instalación")
     fig3 = px.box(df_filtrado, x="Tipo de instalacion",
                   y=df_filtrado["COSTO POR WATT"] * factor,
                   color="Tipo de instalacion")
-    st.subheader("📦 Costo por Watt por Tipo de Instalación")
     st.plotly_chart(fig3)
 
 # Promedio por cuadrilla
