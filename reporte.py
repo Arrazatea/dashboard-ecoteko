@@ -32,8 +32,8 @@ tipo_proyecto = st.sidebar.radio("🔘 Selecciona el tipo de proyecto:", ["BT", 
 def load_data_bt():
     url = "https://raw.githubusercontent.com/Arrazatea/dashboard-ecoteko/refs/heads/main/ReporteJunio25.csv"
     df = pd.read_csv(url, encoding="latin1")
-    df.rename(columns={"Tipo de instalaciÃ³n": "Tipo de instalacion"}, inplace=True)
     df.columns = df.columns.str.replace("ï»¿", "").str.strip()
+    df.rename(columns=lambda c: unicodedata.normalize('NFKD', c).encode('ascii', 'ignore').decode('utf-8'), inplace=True)
     df["Mes"] = df["Mes"].astype(str).str.strip().str.capitalize()
     df = df[df["Mes"].notna() & (df["Mes"] != "nan")]
     df["Cuadrilla"] = df.get("Cuadrilla", "Sin asignar").fillna("Sin asignar")
