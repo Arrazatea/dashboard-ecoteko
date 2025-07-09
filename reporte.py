@@ -90,12 +90,25 @@ if "Todas" not in instalaciones_sel:
 # MÉTRICAS
 # -------------------
 if tipo_proyecto == "MT":
-    rubros = ["Costo de equipos", "Costo estructura", "Electrico", "Logistica", "Miscelaneos",
-              "Tramites", "Verificacion", "Herramienta", "Otros", "Capacitores"]
-    total_costo = sum((df_filtrado[r] * IVA).sum() for r in rubros if r in df_filtrado.columns)
-    total_costo += df_filtrado.get("Costo mano de obra", pd.Series(0)).sum()
+    # Incluir todos los conceptos de costo válidos
+    rubros = [col for col in df_filtrado.columns if (
+        "Costo" in col or col in [
+            "Electrico", "Logistica", "Miscelaneos", "Tramites",
+            "Verificacion", "Herramienta", "Otros", "Capacitores"
+        ]
+    ) and col not in [
+        "Costo total", "Costo por panel",
+        "Costo de estructura vs. costo de modulos",
+        "Costo total de estructura por panel"
+    ]]
+    
+    total_costo = sum(
+        (df_filtrado[col] * (1 if col == "Costo mano de obra" else IVA)).sum()
+        for col in rubros
+    )
 else:
     total_costo = df_filtrado.get("Costo total", pd.Series(0)).sum()
+
 total_costo *= factor
 
 col1, col2, col3 = st.columns(3)
@@ -113,10 +126,9 @@ col6.metric("🏗️ Costo Prom. por Panel", f"${df_filtrado.get('Costo total de
 # -------------------
 st.subheader("💰 Distribución de Costos")
 if tipo_proyecto == "MT":
-    rubros_mt = rubros + ["Costo mano de obra"]
     cost_data = pd.DataFrame({
-        "Categoría": [r for r in rubros_mt if r in df_filtrado.columns],
-        "Monto": [(df_filtrado[r] * (1 if r == "Costo mano de obra" else IVA)).sum() * factor for r in rubros_mt if r in df_filtrado.columns]
+        "Categoría": [col for col in rubros],
+        "Monto": [(df_filtrado[col] * (1 if col == "Costo mano de obra" else IVA)).sum() * factor for col in rubros]
     })
 else:
     cost_data = pd.DataFrame({
@@ -127,10 +139,11 @@ else:
             df_filtrado.get("Costo mano de obra", pd.Series(0)).sum() * factor
         ]
     })
+
 st.plotly_chart(px.pie(cost_data, names="Categoría", values="Monto"))
 
 # -------------------
-# GRÁFICA 1: Costo estructura por panel
+# GRÁFICA 1: Costo estructura por panel por proyecto
 # -------------------
 if (
     "Costo total de estructura por panel" in df_filtrado.columns and
@@ -162,7 +175,7 @@ if "COSTO POR WATT" in df_filtrado.columns and "Tipo de instalacion" in df_filtr
     st.plotly_chart(fig3)
 
 # -------------------
-# GRÁFICA 3: Promedio por cuadrilla
+# GRÁFICA 3: Promedio de costo por panel por cuadrilla
 # -------------------
 if all(col in df_filtrado.columns for col in ["Cuadrilla", "Costo total", "No. de Paneles"]):
     df_temp = df_filtrado[df_filtrado["No. de Paneles"] > 0].copy()
